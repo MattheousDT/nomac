@@ -19,7 +19,7 @@ class Abbreviation extends NomacCommand {
   Future<Message> cb(CommandContext context, String message) {
     var abb = message.split(' ')[1].toLowerCase();
 
-    if (abb == '') {
+    if (abb.isEmpty) {
       return context.reply(
           content: 'No acronym provided. For example `!acronym sfam`');
     }
@@ -38,7 +38,7 @@ class Abbreviation extends NomacCommand {
   }
 }
 
-Map<Set<String>, String> _abbreviations = {
+const Map<Set<String>, String> _abbreviations = {
   // Song Abbreviations
   {'afil'}: 'A Fortune in Lies',
   {'tkh'}: 'The Killing Hand',
@@ -57,14 +57,13 @@ Map<Set<String>, String> _abbreviations = {
   {'tgp'}: 'The Glass Prison',
   {'bf'}: 'Blind Faith',
   {'tgd'}: 'The Great Debate',
-  {'sdoit', '6doit'}: 'Six Degrees of Inner Turbulence',
   {'tds'}: 'This Dying Soul',
   {'htf'}: 'Honer Thy Father',
   {'soc'}: 'Stream of Consciousness',
   {'itnog'}: 'In the Name of God',
   {'troae'}: 'The Root of all Evil',
   {'ss'}: 'Sacrificed Songs',
-  {'8v', '8vm', '8var', 'vium'}: 'Octavarium',
+  {'8v', '8vm', '8vium'}: 'Octavarium',
   {'itpoe'}: 'In the Presence of Enemies',
   {'tden'}: 'The Dark Eternal Night',
   {'tmols', 'mols'}: 'The Ministry of Lost Souls',
@@ -93,7 +92,6 @@ Map<Set<String>, String> _abbreviations = {
   // Album Abbreviations
   {'wdadu'}: 'When Dream and Day Unite',
   {'iaw', 'i&w'}: 'Images and Words',
-  {'acos'}: 'A Change of Seasons EP',
   {'sfam', 'm2', 'scenes'}: 'Metropolis Pt. 2: Scenes from a Memory',
   {'sdoit', '6doit'}: 'Six Degrees of Inner Turbulence',
   {'tot'}: 'Train of Thought or Trial of Tears',

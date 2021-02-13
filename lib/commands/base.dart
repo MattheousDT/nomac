@@ -1,6 +1,5 @@
 import 'package:dotenv/dotenv.dart' show env;
 import 'package:nyxx_commander/commander.dart';
-import 'package:meta/meta.dart';
 
 abstract class NomacCommand {
   final String authorId;
