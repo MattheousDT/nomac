@@ -1,23 +1,25 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:dotenv/dotenv.dart' show env;
 import 'package:nyxx_commander/commander.dart';
+import 'package:meta/meta.dart';
 
 abstract class NomacCommand {
   final String authorId;
   final String name;
   final String description;
-  final String help;
+  final String? help;
   final String? thumbnail;
   final String match;
+  final List<String>? matchAliases;
   final bool adminOnly;
 
   NomacCommand({
     required this.authorId,
     required this.name,
     required this.description,
-    required this.help,
+    this.help,
     this.thumbnail,
     required this.match,
+    this.matchAliases,
     required this.adminOnly,
   });
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:dotenv/dotenv.dart' show env, load;
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
@@ -19,7 +18,12 @@ void main(List<String> arguments) {
 
   var commander = Commander(bot, prefix: '!');
 
-  commands.forEach((e) => commander.registerCommand(e.match, e.run));
+  commands.forEach((e) {
+    commander.registerCommand(e.match, e.run);
+
+    e.matchAliases
+        ?.forEach(((alias) => commander.registerCommand(alias, e.run)));
+  });
 
   print('registered commands');
 
@@ -27,9 +31,7 @@ void main(List<String> arguments) {
   Timer(Duration(seconds: 2), () {
     bot.setPresence(PresenceBuilder.of(
       game: Activity.of(
-        'bruh',
-        type: ActivityType.game,
-        url: 'https://winget.run/',
+        'Very much in development',
       ),
     ));
   });

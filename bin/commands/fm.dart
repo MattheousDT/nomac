@@ -1,4 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:dotenv/dotenv.dart' show env;
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';

@@ -6,7 +6,7 @@ import 'base.dart';
 class Info extends NomacCommand {
   Info()
       : super(
-          authorId: 'Matt',
+          authorId: '190914446774763520',
           name: 'Info',
           description: 'Gives info innit',
           help: 'bruhhhh',
