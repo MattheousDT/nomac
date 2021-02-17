@@ -1,3 +1,4 @@
+import 'package:args/args.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
@@ -12,14 +13,14 @@ class Help extends NomacCommand {
           authorId: '190914446774763520',
           name: 'Help',
           description: 'Gives help innit',
-          help: 'bruhhhh',
+          example: 'bruhhhh',
           match: 'help',
           adminOnly: true,
           type: NomacCommandType.command,
         );
 
   @override
-  Future cb(CommandContext context, String message) {
+  Future cb(context, message, args) {
     var args = message.split(' ');
 
     var current = args.last != '' ? int.tryParse(args.last) ?? 1 : 1;

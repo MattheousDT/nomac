@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dotenv/dotenv.dart' show env, load;
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:nomac/commands/base.dart';
+import 'commands/base.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 

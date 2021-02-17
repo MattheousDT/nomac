@@ -1,3 +1,4 @@
+import 'package:args/args.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
@@ -9,7 +10,7 @@ class Abbreviation extends NomacCommand {
           authorId: '190914446774763520',
           name: 'Abbreviation',
           description: 'Provides the meaning of a song/album/etc. abbreviation',
-          help: 'bruhhhh',
+          example: 'bruhhhh',
           match: 'abbr',
           matchAliases: ['abbrevation', 'abb'],
           adminOnly: false,
@@ -17,10 +18,14 @@ class Abbreviation extends NomacCommand {
         );
 
   @override
-  Future<Message> cb(CommandContext context, String message) {
-    var abb = message.split(' ')[1].toLowerCase();
+  Future<Message> cb(
+    CommandContext context,
+    String message,
+    ArgResults args,
+  ) async {
+    var abbr = message.split(' ')[1].toLowerCase();
 
-    if (abb.isEmpty) {
+    if (abbr.isEmpty) {
       return context.reply(
           content: 'No acronym provided. For example `!acronym sfam`');
     }
@@ -28,7 +33,7 @@ class Abbreviation extends NomacCommand {
     Set<String> key;
 
     key = _abbreviations.keys.firstWhere(
-      (e) => e.contains(abb),
+      (e) => e.contains(abbr),
       orElse: () => {},
     );
 

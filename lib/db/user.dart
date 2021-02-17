@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:nomac/nomac.dart';
+
+import '../nomac.dart';
 
 part 'user.g.dart';
 

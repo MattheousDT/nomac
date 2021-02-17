@@ -1,12 +1,10 @@
-import 'package:args/args.dart';
 import 'package:dotenv/dotenv.dart' show env;
-import 'package:nomac/api/lastfm_collage.dart';
-import 'package:nomac/constants.dart';
-import 'package:nomac/db/user.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_commander/commander.dart';
 
 import '../api/lastfm_api.dart';
+import '../api/lastfm_collage.dart';
+import '../constants.dart';
+import '../db/user.dart';
 import '../nomac.dart';
 import 'base.dart';
 
@@ -17,11 +15,12 @@ class LastFm extends NomacCommand {
       : super(
           authorId: '190914446774763520',
           name: 'Last.fm',
-          description: 'Gets you last fm info innit',
-          help: 'bruhhhh',
+          description:
+              'Gets information from last.fm.\nIf no username is explicitly given, it will use the one that you set with\n`!fm set --user <username>`',
+          example: '!fm artists --period 1month',
           match: 'fm',
-          thumbnail:
-              'https://cdn.discordapp.com/attachments/209040403918356481/509092391467352065/t29.png',
+          icon:
+              'https://cdn2.iconfinder.com/data/icons/social-icon-3/512/social_style_3_lastfm-512.png',
           adminOnly: false,
           type: NomacCommandType.command,
         );
@@ -38,19 +37,12 @@ class LastFm extends NomacCommand {
       ..addOption(
         'period',
         abbr: 'p',
-        allowed: ['7day', '1month', '3month', '12month'],
+        allowed: ['7day', '1month', '3month', '12month', 'overall'],
       );
   }
 
   @override
-  Future cb(CommandContext context, String message) async {
-    late ArgResults args;
-    try {
-      args = argParser.parse(getArgs(message));
-    } catch (err) {
-      return context.reply(content: err.toString());
-    }
-
+  Future cb(context, message, args) async {
     final command = args.command?.name;
     String? user = args['user'];
     String? period = args['period'];
@@ -142,7 +134,6 @@ class LastFm extends NomacCommand {
             content: err,
           );
         }
-      case null:
       case 'recent':
         try {
           var data = await fm.getRecent(user!);
@@ -166,7 +157,7 @@ class LastFm extends NomacCommand {
       default:
         return context.reply(
             content:
-                '${command} is not a valid command. Type `!help fm` for more info');
+                '${command} is not a valid command. Type `!fm --help` for more info');
     }
 
     return context.channel.sendMessage(embed: embed);

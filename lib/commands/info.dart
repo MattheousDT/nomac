@@ -1,3 +1,4 @@
+import 'package:args/args.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
@@ -10,14 +11,14 @@ class Info extends NomacCommand {
           authorId: '190914446774763520',
           name: 'Info',
           description: 'Gives info innit',
-          help: 'bruhhhh',
+          example: 'bruhhhh',
           match: 'info',
           adminOnly: true,
           type: NomacCommandType.command,
         );
 
   @override
-  Future cb(CommandContext context, String message) {
+  Future cb(CommandContext context, String message, ArgResults args) {
     var embed = EmbedBuilder()
       ..addField(content: 'Info command')
       ..addAuthor((author) {
