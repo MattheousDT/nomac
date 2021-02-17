@@ -19,7 +19,7 @@ Future<void> initServiceLocator() async {
     exit(1);
   }
 
-  // Register Bot
+  // External Dependencies
   di.registerLazySingleton<Nyxx>(
     () => Nyxx(
       botToken,
@@ -27,8 +27,6 @@ Future<void> initServiceLocator() async {
       ignoreExceptions: isProduction,
     ),
   );
-
-  // Register Mongo Database
   // TODO: Make database connection string an env var
   di.registerLazySingleton<Db>(() => Db('mongodb://localhost:27017/nomac'));
 
