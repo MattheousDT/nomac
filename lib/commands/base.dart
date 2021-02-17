@@ -14,6 +14,11 @@ enum NomacCommandType {
   contains,
 }
 
+class NomacException implements Exception {
+  final String message;
+  NomacException(this.message);
+}
+
 abstract class NomacCommand {
   final String authorId;
   final String name;
@@ -37,7 +42,7 @@ abstract class NomacCommand {
     required this.type,
   });
 
-  Future run(CommandContext context, String message) {
+  Future<Message> run(CommandContext context, String message) async {
     // If command is admin only
     if (adminOnly && context.author.id.toString() != env['ADMIN_ID']) {
       return context.reply(
@@ -49,7 +54,7 @@ abstract class NomacCommand {
     try {
       args = argParser.parse(getArgs(message));
     } catch (err) {
-      return context.reply(content: err.toString());
+      return displayError(context, err.toString());
     }
 
     if (args['help']) {
@@ -57,7 +62,17 @@ abstract class NomacCommand {
     }
 
     // Else run the command
-    return cb(context, message, args);
+    Message callbackResult;
+    try {
+      callbackResult = await cb(context, message, args);
+    } on NomacException catch (exception) {
+      return displayError(
+        context,
+        exception.message,
+      );
+    }
+
+    return callbackResult;
   }
 
   ArgParser argParser = ArgParser()
@@ -69,11 +84,11 @@ abstract class NomacCommand {
 
   String getEmbedTitle() => 'NOMAC // $name';
 
-  Future cb(CommandContext context, String message, ArgResults args) {
+  Future<Message> cb(CommandContext context, String message, ArgResults args) {
     return context.channel.sendMessage(content: 'Base command!');
   }
 
-  Future displayHelp(CommandContext context) {
+  Future<Message> displayHelp(CommandContext context) {
     var embed = EmbedBuilder()
       ..color = nomacDiscordColor
       ..addAuthor((author) {
@@ -83,23 +98,41 @@ abstract class NomacCommand {
       ..addFooter((footer) {
         footer.text = 'Usage: !$match <command> [options]';
       })
-      ..addField(name: 'Description', content: description)
-      ..addField(
+      ..addField(name: 'Description', content: description);
+
+    if (argParser.commands.isNotEmpty) {
+      embed.addField(
         name: 'Commands',
         content: argParser.commands.keys
             .map((sub) => '`!$match ${sub} [options]`')
             .join('\n'),
-      )
-      ..addField(
+      );
+    }
+
+    if (argParser.options.isNotEmpty) {
+      embed.addField(
         name: 'Options',
         content: argParser.usage,
-      )
-      ..addField(name: 'Example', content: '```$example```');
+      );
+    }
+
+    embed.addField(name: 'Example', content: '```$example```');
 
     return context.channel.sendMessage(embed: embed);
   }
 
-  Future displayError(CommandContext context) {
-    return context.channel.sendMessage(content: '```${argParser.usage}```');
+  Future<Message> displayError(CommandContext context, String message) {
+    var embed = EmbedBuilder()
+      ..color = DiscordColor.yellow
+      ..addAuthor((author) {
+        author.name = '⚠ NOMAC encountered an error';
+        author.iconUrl = icon ?? bot.app.iconUrl();
+      })
+      ..addFooter((footer) {
+        footer.text = 'Type `!$match --help` for help';
+      })
+      ..description = message;
+
+    return context.reply(embed: embed);
   }
 }

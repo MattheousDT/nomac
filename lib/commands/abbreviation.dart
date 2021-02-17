@@ -1,6 +1,4 @@
-import 'package:args/args.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_commander/commander.dart';
 
 import 'base.dart';
 
@@ -10,24 +8,32 @@ class Abbreviation extends NomacCommand {
           authorId: '190914446774763520',
           name: 'Abbreviation',
           description: 'Provides the meaning of a song/album/etc. abbreviation',
-          example: 'bruhhhh',
+          example: '!abbr sfam',
           match: 'abbr',
-          matchAliases: ['abbrevation', 'abb'],
           adminOnly: false,
           type: NomacCommandType.command,
         );
 
   @override
-  Future<Message> cb(
-    CommandContext context,
-    String message,
-    ArgResults args,
-  ) async {
-    var abbr = message.split(' ')[1].toLowerCase();
+  void registerArgs() {
+    argParser..addCommand('list');
+  }
 
-    if (abbr.isEmpty) {
+  @override
+  Future<Message> cb(context, message, args) async {
+    if (args.command?.name == 'list') {
       return context.reply(
-          content: 'No acronym provided. For example `!acronym sfam`');
+        content:
+            '<https://github.com/MattheousDT/nomac/blob/master/lib/commands/abbreviation.dart#L56>',
+      );
+    }
+
+    String abbr;
+    try {
+      abbr = args.arguments.first.toLowerCase();
+    } catch (_) {
+      throw NomacException(
+          'No abbreviation provided.\nFor example, try `!abbr sfam`');
     }
 
     Set<String> key;
@@ -38,10 +44,10 @@ class Abbreviation extends NomacCommand {
     );
 
     if (key.isEmpty) {
-      return context.reply(content: 'Could not find the acronym provided');
+      throw NomacException('Could not find the acronym provided');
     }
 
-    var match = _abbreviations[key];
+    var match = _abbreviations[key]!;
 
     return context.reply(content: match);
   }
@@ -55,6 +61,7 @@ const Map<Set<String>, String> _abbreviations = {
   {'pme'}: 'Pull Me Under',
   {'ttt'}: 'Take The Time',
   {'uagm'}: 'Under a Glass Moon',
+  {'m1', 'tmats'}: 'Metropolis Pt.1, The Miracle and the Sleeper',
   {'ltl'}: 'Learning to Live',
   {'acos'}: 'A Change of Seasons',
   {'ciaw'}: 'Caught in a Web',

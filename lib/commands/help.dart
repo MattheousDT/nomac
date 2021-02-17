@@ -20,7 +20,7 @@ class Help extends NomacCommand {
         );
 
   @override
-  Future cb(context, message, args) {
+  Future<Message> cb(context, message, args) {
     var args = message.split(' ');
 
     var current = args.last != '' ? int.tryParse(args.last) ?? 1 : 1;

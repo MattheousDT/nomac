@@ -18,7 +18,7 @@ class Info extends NomacCommand {
         );
 
   @override
-  Future cb(CommandContext context, String message, ArgResults args) {
+  Future<Message> cb(CommandContext context, String message, ArgResults args) {
     var embed = EmbedBuilder()
       ..addField(content: 'Info command')
       ..addAuthor((author) {

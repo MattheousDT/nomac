@@ -42,11 +42,10 @@ class LastFm extends NomacCommand {
   }
 
   @override
-  Future cb(context, message, args) async {
+  Future<Message> cb(context, message, args) async {
     final command = args.command?.name;
     String? user = args['user'];
     String? period = args['period'];
-    print('command: $command\nuser: $user\nperiod: $period');
 
     // If username is not provided
     if (user == null) {
@@ -56,10 +55,8 @@ class LastFm extends NomacCommand {
 
       // If no user exists in the DB
       if (dbUser == null) {
-        return context.reply(
-          content:
-              'Username not provided. Try providing a username or use `!fm save <username>` to save one',
-        );
+        throw NomacException(
+            'Username not provided. Try providing a username or use `!fm save <username>` to save one');
       }
 
       user = dbUser.lastFmUsername;
@@ -88,9 +85,7 @@ class LastFm extends NomacCommand {
                 field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
           );
         } catch (err) {
-          return context.reply(
-            content: 'An error occurred. Maybe your username is wrong?',
-          );
+          throw NomacException('Maybe your username is wrong?');
         }
         break;
       case 'albums':
@@ -106,9 +101,7 @@ class LastFm extends NomacCommand {
                 field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
           );
         } catch (err) {
-          return context.reply(
-            content: 'An error occurred. Maybe your username is wrong?',
-          );
+          throw NomacException('Maybe your username is wrong?');
         }
         break;
       case 'set':
@@ -119,20 +112,19 @@ class LastFm extends NomacCommand {
           return context.reply(
               content: 'Your last.fm username has been set to "$user"');
         } catch (err) {
-          return context.reply(
-            content: 'An error occurred trying to save your username.',
-          );
+          throw NomacException('Couldn\'nt save your username');
         }
       case 'collage':
         try {
-          var img = await getLastFmCollage(user!, period ?? '7day');
-          return context.channel.sendMessage(
+          return context.enterTypingState(() async {
+            var img = await getLastFmCollage(user!, period ?? '7day');
+            return context.channel.sendMessage(
               files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
-              content: '');
+              content: '',
+            );
+          });
         } catch (err) {
-          return context.reply(
-            content: err,
-          );
+          rethrow;
         }
       case 'recent':
         try {
@@ -149,15 +141,11 @@ class LastFm extends NomacCommand {
                 field: EmbedFieldBuilder('Previous',
                     '${data[1].name} - ${data[1].artistName} [${data[1].albumName}]'));
         } catch (err) {
-          return context.reply(
-            content: 'An error occurred. Maybe your username is wrong?',
-          );
+          throw NomacException('Maybe your username is wrong?');
         }
         break;
       default:
-        return context.reply(
-            content:
-                '${command} is not a valid command. Type `!fm --help` for more info');
+        return displayHelp(context);
     }
 
     return context.channel.sendMessage(embed: embed);

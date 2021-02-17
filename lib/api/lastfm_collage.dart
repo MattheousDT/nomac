@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:nomac/commands/base.dart';
 
 Future<Uint8List> getLastFmCollage(String user, String period) async {
   var uri = Uri.https(
@@ -15,7 +16,7 @@ Future<Uint8List> getLastFmCollage(String user, String period) async {
   var res = await http.get(uri);
 
   if (res.headers['content-type']!.startsWith('text/html')) {
-    throw '$user does not have any top albums';
+    throw NomacException('$user does not have any top albums');
   }
 
   return res.bodyBytes;
