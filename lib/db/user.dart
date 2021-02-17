@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../nomac.dart';
+import '../service_locator.dart';
 
 part 'user.g.dart';
+
+var db = di<Db>();
 
 @JsonSerializable()
 class NomacUser {

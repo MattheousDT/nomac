@@ -6,7 +6,9 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
 import '../constants.dart';
-import '../nomac.dart';
+import '../service_locator.dart';
+
+var bot = di<Nyxx>();
 
 enum NomacCommandType {
   command,
@@ -19,7 +21,7 @@ class NomacException implements Exception {
   NomacException(this.message);
 }
 
-abstract class NomacCommand {
+abstract class Script {
   final String authorId;
   final String name;
   final String description;
@@ -30,7 +32,7 @@ abstract class NomacCommand {
   final bool adminOnly;
   final NomacCommandType type;
 
-  NomacCommand({
+  Script({
     required this.authorId,
     required this.name,
     required this.description,
@@ -52,13 +54,13 @@ abstract class NomacCommand {
     // Try and parse the arguments
     late ArgResults args;
     try {
-      args = argParser.parse(getArgs(message));
+      args = argParser.parse(_getArgs(message));
     } catch (err) {
-      return displayError(context, err.toString());
+      return _displayError(context, err.toString());
     }
 
     if (args['help']) {
-      return displayHelp(context);
+      return _displayHelp(context);
     }
 
     // Else run the command
@@ -66,7 +68,7 @@ abstract class NomacCommand {
     try {
       callbackResult = await cb(context, message, args);
     } on NomacException catch (exception) {
-      return displayError(
+      return _displayError(
         context,
         exception.message,
       );
@@ -78,8 +80,6 @@ abstract class NomacCommand {
   ArgParser argParser = ArgParser()
     ..addFlag('help', abbr: 'h', negatable: false);
 
-  List<String> getArgs(String message) => message.split(' ')..removeAt(0);
-
   FutureOr<void> registerArgs() => null;
 
   String getEmbedTitle() => 'NOMAC // $name';
@@ -88,7 +88,9 @@ abstract class NomacCommand {
     return context.channel.sendMessage(content: 'Base command!');
   }
 
-  Future<Message> displayHelp(CommandContext context) {
+  List<String> _getArgs(String message) => message.split(' ')..removeAt(0);
+
+  Future<Message> _displayHelp(CommandContext context) {
     var embed = EmbedBuilder()
       ..color = nomacDiscordColor
       ..addAuthor((author) {
@@ -121,7 +123,7 @@ abstract class NomacCommand {
     return context.channel.sendMessage(embed: embed);
   }
 
-  Future<Message> displayError(CommandContext context, String message) {
+  Future<Message> _displayError(CommandContext context, String message) {
     var embed = EmbedBuilder()
       ..color = DiscordColor.yellow
       ..addAuthor((author) {

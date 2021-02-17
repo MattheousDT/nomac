@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:nomac/commands/base.dart';
+
+import '../models/script.dart';
 
 Future<Uint8List> getLastFmCollage(String user, String period) async {
   var uri = Uri.https(

@@ -3,9 +3,9 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
 import '../constants.dart';
-import 'base.dart';
+import '../models/script.dart';
 
-class Info extends NomacCommand {
+class Info extends Script {
   Info()
       : super(
           authorId: '190914446774763520',

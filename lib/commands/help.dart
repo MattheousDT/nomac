@@ -1,13 +1,13 @@
-import 'package:args/args.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_commander/commander.dart';
 
 import '../commands.dart';
 import '../constants.dart';
-import '../nomac.dart';
-import 'base.dart';
+import '../models/script.dart';
+import '../service_locator.dart';
 
-class Help extends NomacCommand {
+var bot = di<Nyxx>();
+
+class Help extends Script {
   Help()
       : super(
           authorId: '190914446774763520',

@@ -1,8 +1,8 @@
 import 'package:nyxx/nyxx.dart';
 
-import 'base.dart';
+import '../models/script.dart';
 
-class Abbreviation extends NomacCommand {
+class Abbreviation extends Script {
   Abbreviation()
       : super(
           authorId: '190914446774763520',

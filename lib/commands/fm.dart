@@ -5,12 +5,13 @@ import '../api/lastfm_api.dart';
 import '../api/lastfm_collage.dart';
 import '../constants.dart';
 import '../db/user.dart';
-import '../nomac.dart';
-import 'base.dart';
+import '../models/script.dart';
+import '../service_locator.dart';
 
 var fm = LastFmApi(env['LASTFM_TOKEN']!);
+var bot = di<Nyxx>();
 
-class LastFm extends NomacCommand {
+class LastFm extends Script {
   LastFm()
       : super(
           authorId: '190914446774763520',
@@ -56,7 +57,7 @@ class LastFm extends NomacCommand {
       // If no user exists in the DB
       if (dbUser == null) {
         throw NomacException(
-            'Username not provided. Try providing a username or use `!fm save <username>` to save one');
+            'Username not provided. Try providing a username or use `!fm set --user <username>` to save one');
       }
 
       user = dbUser.lastFmUsername;
@@ -145,7 +146,8 @@ class LastFm extends NomacCommand {
         }
         break;
       default:
-        return displayHelp(context);
+        throw NomacException(
+            '$command is not a valid command. Type `!fm --help` for a list of commands');
     }
 
     return context.channel.sendMessage(embed: embed);
