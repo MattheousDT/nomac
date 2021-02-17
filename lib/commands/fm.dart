@@ -1,15 +1,17 @@
 import 'package:dotenv/dotenv.dart' show env;
+import 'package:nomac/services/user_service.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../api/lastfm_api.dart';
 import '../api/lastfm_collage.dart';
 import '../constants.dart';
-import '../db/user.dart';
+import '../models/user.dart';
 import '../models/script.dart';
 import '../service_locator.dart';
 
 var fm = LastFmApi(env['LASTFM_TOKEN']!);
 var bot = di<Nyxx>();
+var userService = di<UserService>();
 
 class LastFm extends Script {
   LastFm()
@@ -51,8 +53,8 @@ class LastFm extends Script {
     // If username is not provided
     if (user == null) {
       // Try grabbing from the DB
-      var dbUser = await NomacUser(discordId: context.author.id.toString())
-          .getUserFromDb();
+      var dbUser =
+          await userService.getUserByDiscordId(context.author.id.toString());
 
       // If no user exists in the DB
       if (dbUser == null) {
@@ -109,11 +111,11 @@ class LastFm extends Script {
         try {
           var nomacUser = NomacUser(
               discordId: context.author.id.toString(), lastFmUsername: user);
-          await nomacUser.updateLastFm();
+          await userService.updateUser(nomacUser);
           return context.reply(
               content: 'Your last.fm username has been set to "$user"');
         } catch (err) {
-          throw NomacException('Couldn\'nt save your username');
+          throw NomacException(err.toString());
         }
       case 'collage':
         try {
