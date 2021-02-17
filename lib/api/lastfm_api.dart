@@ -81,63 +81,51 @@ class LastFmApi {
     var data = await request('user.gettopartists', user, period);
     var artists = List.from(data['topartists']['artist']);
 
-    try {
-      var bruh = artists
-          .map((e) => LastFmArtist(
-                name: e['name'],
-                rank: int.parse(e['@attr']['rank']),
-                url: e['url'],
-                imageUrl: List.from(e['image']).last['#text'],
-                playCount: int.parse(e['playcount']),
-              ))
-          .toList();
+    var bruh = artists
+        .map((e) => LastFmArtist(
+              name: e['name'],
+              rank: int.parse(e['@attr']['rank']),
+              url: e['url'],
+              imageUrl: List.from(e['image']).last['#text'],
+              playCount: int.parse(e['playcount']),
+            ))
+        .toList();
 
-      return bruh;
-    } catch (err) {
-      throw Error();
-    }
+    return bruh;
   }
 
   Future<List<LastFmAlbum>> getTopAlbums(String user, String period) async {
     var data = await request('user.gettopalbums', user, period);
     var albums = List.from(data['topalbums']['album']);
 
-    try {
-      var bruh = albums
-          .map((e) => LastFmAlbum(
-                name: e['name'],
-                artistName: e['artist']['name'],
-                rank: int.parse(e['@attr']['rank']),
-                url: e['url'],
-                imageUrl: List.from(e['image']).last['#text'],
-                playCount: int.parse(e['playcount']),
-              ))
-          .toList();
+    var bruh = albums
+        .map((e) => LastFmAlbum(
+              name: e['name'],
+              artistName: e['artist']['name'],
+              rank: int.parse(e['@attr']['rank']),
+              url: e['url'],
+              imageUrl: List.from(e['image']).last['#text'],
+              playCount: int.parse(e['playcount']),
+            ))
+        .toList();
 
-      return bruh;
-    } catch (err) {
-      throw Error();
-    }
+    return bruh;
   }
 
   Future<List<LastFmRecent>> getRecent(String user) async {
     var data = await request('user.getrecenttracks', user, 'all');
     var tracks = List.from(data['recenttracks']['track']);
 
-    try {
-      var bruh = tracks
-          .map((e) => LastFmRecent(
-                name: e['name'],
-                artistName: e['artist']['#text'],
-                albumName: e['album']['#text'],
-                url: e['url'],
-                imageUrl: List.from(e['image']).last['#text'],
-              ))
-          .toList();
+    var bruh = tracks
+        .map((e) => LastFmRecent(
+              name: e['name'],
+              artistName: e['artist']['#text'],
+              albumName: e['album']['#text'],
+              url: e['url'],
+              imageUrl: List.from(e['image']).last['#text'],
+            ))
+        .toList();
 
-      return bruh;
-    } catch (err) {
-      throw Error();
-    }
+    return bruh;
   }
 }

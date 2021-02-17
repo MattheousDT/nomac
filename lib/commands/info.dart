@@ -1,6 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
+import '../constants.dart';
 import 'base.dart';
 
 class Info extends NomacCommand {
@@ -12,6 +13,7 @@ class Info extends NomacCommand {
           help: 'bruhhhh',
           match: 'info',
           adminOnly: true,
+          type: NomacCommandType.command,
         );
 
   @override
@@ -19,10 +21,10 @@ class Info extends NomacCommand {
     var embed = EmbedBuilder()
       ..addField(content: 'Info command')
       ..addAuthor((author) {
-        author.name = context.author.username;
+        author.name = getEmbedTitle();
         author.iconUrl = context.author.avatarURL();
       })
-      ..color = DiscordColor.teal;
+      ..color = nomacDiscordColor;
 
     return context.channel.sendMessage(embed: embed);
   }

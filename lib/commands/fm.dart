@@ -1,4 +1,8 @@
+import 'package:args/args.dart';
 import 'package:dotenv/dotenv.dart' show env;
+import 'package:nomac/api/lastfm_collage.dart';
+import 'package:nomac/constants.dart';
+import 'package:nomac/db/user.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
@@ -19,33 +23,72 @@ class LastFm extends NomacCommand {
           thumbnail:
               'https://cdn.discordapp.com/attachments/209040403918356481/509092391467352065/t29.png',
           adminOnly: false,
+          type: NomacCommandType.command,
         );
 
   @override
+  void registerArgs() {
+    argParser
+      ..addCommand('recent')
+      ..addCommand('artists')
+      ..addCommand('albums')
+      ..addCommand('set')
+      ..addCommand('collage')
+      ..addOption('user', abbr: 'u')
+      ..addOption(
+        'period',
+        abbr: 'p',
+        allowed: ['7day', '1month', '3month', '12month'],
+      );
+  }
+
+  @override
   Future cb(CommandContext context, String message) async {
-    var args = message.split(' ');
-    var method = args.length > 2 ? args[1] : 'recent';
-    var user = args.length > 2 ? args.last : context.author.username;
+    late ArgResults args;
+    try {
+      args = argParser.parse(getArgs(message));
+    } catch (err) {
+      return context.reply(content: err.toString());
+    }
+
+    final command = args.command?.name;
+    String? user = args['user'];
+    String? period = args['period'];
+    print('command: $command\nuser: $user\nperiod: $period');
+
+    // If username is not provided
+    if (user == null) {
+      // Try grabbing from the DB
+      var dbUser = await NomacUser(discordId: context.author.id.toString())
+          .getUserFromDb();
+
+      // If no user exists in the DB
+      if (dbUser == null) {
+        return context.reply(
+          content:
+              'Username not provided. Try providing a username or use `!fm save <username>` to save one',
+        );
+      }
+
+      user = dbUser.lastFmUsername;
+    }
 
     var embed = EmbedBuilder()
       ..addAuthor((author) {
-        author.name = 'NOMAC // Last.fm';
+        author.name = getEmbedTitle();
         author.iconUrl = bot.app.iconUrl();
       })
       ..addFooter((footer) {
         footer.text = 'View full stats on last.fm';
       })
-      ..color = DiscordColor.fromHexString('#ff594f')
-      ..thumbnailUrl =
-          'https://cdn.discordapp.com/attachments/285057239159668736/809886732887261224/A-2980211-1430953212-1138.png';
+      ..color = nomacDiscordColor;
 
-    switch (method) {
+    switch (command) {
       case 'artists':
         try {
-          var data = await fm.getTopArtists(user, 'overall');
+          var data = await fm.getTopArtists(user!, period ?? 'overall');
 
           embed
-            ..thumbnailUrl = data[0].imageUrl
             ..title = 'View $user\'s profile'
             ..url = 'https://last.fm/user/$user';
           data.forEach(
@@ -60,7 +103,7 @@ class LastFm extends NomacCommand {
         break;
       case 'albums':
         try {
-          var data = await fm.getTopAlbums(user, 'overall');
+          var data = await fm.getTopAlbums(user!, period ?? 'overall');
 
           embed
             ..thumbnailUrl = data[0].imageUrl
@@ -76,9 +119,33 @@ class LastFm extends NomacCommand {
           );
         }
         break;
+      case 'set':
+        try {
+          var nomacUser = NomacUser(
+              discordId: context.author.id.toString(), lastFmUsername: user);
+          await nomacUser.updateLastFm();
+          return context.reply(
+              content: 'Your last.fm username has been set to "$user"');
+        } catch (err) {
+          return context.reply(
+            content: 'An error occurred trying to save your username.',
+          );
+        }
+      case 'collage':
+        try {
+          var img = await getLastFmCollage(user!, period ?? '7day');
+          return context.channel.sendMessage(
+              files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
+              content: '');
+        } catch (err) {
+          return context.reply(
+            content: err,
+          );
+        }
+      case null:
       case 'recent':
         try {
-          var data = await fm.getRecent(user);
+          var data = await fm.getRecent(user!);
 
           embed
             ..thumbnailUrl = data[0].imageUrl
@@ -99,7 +166,7 @@ class LastFm extends NomacCommand {
       default:
         return context.reply(
             content:
-                '${args[1]} is not a valid method. Type `!help fm` for more info');
+                '${command} is not a valid command. Type `!help fm` for more info');
     }
 
     return context.channel.sendMessage(embed: embed);

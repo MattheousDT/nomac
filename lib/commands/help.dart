@@ -2,6 +2,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
 import '../commands.dart';
+import '../constants.dart';
 import '../nomac.dart';
 import 'base.dart';
 
@@ -14,6 +15,7 @@ class Help extends NomacCommand {
           help: 'bruhhhh',
           match: 'help',
           adminOnly: true,
+          type: NomacCommandType.command,
         );
 
   @override
@@ -34,21 +36,26 @@ class Help extends NomacCommand {
 
     var embed = EmbedBuilder()
       ..addAuthor((author) {
-        author.name = 'NOMAC // Help';
+        author.name = getEmbedTitle();
         author.iconUrl = bot.app.iconUrl();
       })
       ..addFooter((footer) {
-        footer.text = current == pages
+        footer.text = (current == pages
             ? 'You have reached the final page'
-            : 'Page $current/$pages. Use `!help ${current + 1}` for the next page';
+            : 'Page $current/$pages. Use `!help ${current + 1}` for the next page');
+        //+ '\nPrefix your command with !help to find out more about the command';
       })
-      ..color = DiscordColor.fromHexString('#ff594f');
+      ..color = nomacDiscordColor;
 
-    commands.skip(current - 1).take(6).forEach(
+    commands.where((e) => !e.adminOnly).skip(current - 1).take(6).forEach(
           (e) => embed.addField(
             field: EmbedFieldBuilder(
               e.name,
-              e.description + '\n `!${e.match}`',
+              e.description +
+                  '\n`!${e.match}` ' +
+                  (e.matchAliases != null
+                      ? e.matchAliases!.map((f) => '`!${f}`').join(' ')
+                      : ''),
             ),
           ),
         );

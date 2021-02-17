@@ -10,9 +10,10 @@ class Abbreviation extends NomacCommand {
           name: 'Abbreviation',
           description: 'Provides the meaning of a song/album/etc. abbreviation',
           help: 'bruhhhh',
-          match: 'abbrevation',
-          matchAliases: ['abb', 'abbr'],
+          match: 'abbr',
+          matchAliases: ['abbrevation', 'abb'],
           adminOnly: false,
+          type: NomacCommandType.command,
         );
 
   @override
@@ -26,9 +27,12 @@ class Abbreviation extends NomacCommand {
 
     Set<String> key;
 
-    try {
-      key = _abbreviations.keys.firstWhere((e) => e.contains(abb));
-    } catch (e) {
+    key = _abbreviations.keys.firstWhere(
+      (e) => e.contains(abb),
+      orElse: () => {},
+    );
+
+    if (key.isEmpty) {
       return context.reply(content: 'Could not find the acronym provided');
     }
 
