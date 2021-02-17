@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dotenv/dotenv.dart' show env, load;
 import 'package:mongo_dart/mongo_dart.dart';
@@ -10,6 +11,7 @@ import 'commands.dart';
 
 var db = Db('mongodb://localhost:27017/nomac');
 late Nyxx bot;
+final isProduction = bool.fromEnvironment('dart.vm.product');
 
 void main(List<String> arguments) async {
   load();
@@ -19,7 +21,7 @@ void main(List<String> arguments) async {
   bot = Nyxx(
     env['BOT_TOKEN'] ?? '',
     GatewayIntents.all,
-    ignoreExceptions: false,
+    ignoreExceptions: isProduction,
   );
 
   var commander = Commander(bot, prefix: '!');

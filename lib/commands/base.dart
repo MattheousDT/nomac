@@ -125,12 +125,13 @@ abstract class NomacCommand {
     var embed = EmbedBuilder()
       ..color = DiscordColor.yellow
       ..addAuthor((author) {
-        author.name = '⚠ NOMAC encountered an error';
+        author.name = getEmbedTitle();
         author.iconUrl = icon ?? bot.app.iconUrl();
       })
       ..addFooter((footer) {
         footer.text = 'Type `!$match --help` for help';
       })
+      ..title = 'NOMAC encountered an error'
       ..description = message;
 
     return context.reply(embed: embed);

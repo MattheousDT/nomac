@@ -21,10 +21,12 @@ class Help extends NomacCommand {
 
   @override
   Future<Message> cb(context, message, args) {
-    var args = message.split(' ');
-
-    var current = args.last != '' ? int.tryParse(args.last) ?? 1 : 1;
-    print(current);
+    int current;
+    try {
+      current = int.parse(args.arguments.first);
+    } catch (_) {
+      current = 1;
+    }
 
     var total = commands.length;
     var pages = (total / 6).ceil();
@@ -44,7 +46,6 @@ class Help extends NomacCommand {
         footer.text = (current == pages
             ? 'You have reached the final page'
             : 'Page $current/$pages. Use `!help ${current + 1}` for the next page');
-        //+ '\nPrefix your command with !help to find out more about the command';
       })
       ..color = nomacDiscordColor;
 
@@ -52,11 +53,7 @@ class Help extends NomacCommand {
           (e) => embed.addField(
             field: EmbedFieldBuilder(
               e.name,
-              e.description +
-                  '\n`!${e.match}` ' +
-                  (e.matchAliases != null
-                      ? e.matchAliases!.map((f) => '`!${f}`').join(' ')
-                      : ''),
+              '${e.description}\n```!${e.match} --help```',
             ),
           ),
         );
