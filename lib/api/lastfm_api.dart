@@ -45,6 +45,7 @@ class LastFmRecent {
   final String artistName;
   final String albumName;
   final String imageUrl;
+  final bool nowPlaying;
 
   LastFmRecent({
     required this.url,
@@ -52,6 +53,7 @@ class LastFmRecent {
     required this.artistName,
     required this.albumName,
     required this.imageUrl,
+    required this.nowPlaying,
   });
 }
 
@@ -123,6 +125,7 @@ class LastFmApi {
               albumName: e['album']['#text'],
               url: e['url'],
               imageUrl: List.from(e['image']).last['#text'],
+              nowPlaying: e['@attr']?['nowplaying'] == 'true',
             ))
         .toList();
 

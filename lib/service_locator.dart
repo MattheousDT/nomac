@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dotenv/dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:nyxx/nyxx.dart';
 
@@ -15,13 +16,15 @@ Future<void> initServiceLocator() async {
   final botToken = env['BOT_TOKEN'];
   final mongoConnectionString = env['MONGO_CONNECTION_STRING'];
 
+  var logger = Logger('NOMAC');
+
   if (botToken == null) {
-    print('Bot token not added to environment variables');
+    logger.severe('Bot token not added to environment variables');
     exit(1);
   }
 
   if (mongoConnectionString == null) {
-    print('Mongo connection string not added to environment variables');
+    logger.severe('Mongo connection string not added to environment variables');
     exit(1);
   }
 

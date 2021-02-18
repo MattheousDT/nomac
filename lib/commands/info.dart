@@ -29,7 +29,7 @@ class Info extends Script {
     var embed = EmbedBuilder()
       ..imageUrl =
           'https://cdn.discordapp.com/attachments/809816006771867669/811995773868441631/unknown.png'
-      ..color = DiscordColor.fromHexString('B972DA');
+      ..color = nomacDiscordColor;
 
     return embed;
   }
@@ -38,8 +38,8 @@ class Info extends Script {
     var embed = EmbedBuilder()
       ..thumbnailUrl =
           'https://cdn.discordapp.com/attachments/809816006771867669/811987970243559444/unknown.png'
-      ..color = DiscordColor.fromHexString('B972DA')
-      ..title = 'Here\'s some rules to bare in mind';
+      ..color = nomacDiscordColor
+      ..title = 'What are the rules?';
 
     _rules.entries.forEach(
       (element) => embed.addField(
@@ -55,7 +55,7 @@ class Info extends Script {
     var embed = EmbedBuilder()
       ..thumbnailUrl =
           'https://cdn.discordapp.com/attachments/809816006771867669/812007872451313664/unknown.png'
-      ..color = DiscordColor.fromHexString('B972DA')
+      ..color = nomacDiscordColor
       ..title = 'What are all these channels?'
       ..description = _channels.entries
           .map((element) => '<#${element.key}>\n${element.value}')
@@ -68,7 +68,7 @@ class Info extends Script {
     var embed = EmbedBuilder()
       ..thumbnailUrl =
           'https://cdn.discordapp.com/attachments/809816006771867669/811999080208793670/main-nomac.png'
-      ..color = DiscordColor.fromHexString('B972DA')
+      ..color = nomacDiscordColor
       ..title = 'NOMAC - Our Discord Bot!'
       ..url = 'https://github.com/MattheousDT/nomac'
       ..description =
@@ -81,7 +81,7 @@ class Info extends Script {
 const _rules = {
   '1. Don\'t be a dick':
       'Pretty self explanatory. This server is extremely chill so please don\'t make others feel unwelcome',
-  '2. Use the channels for their inteded purposes':
+  '2. Use the channels for their intended purposes':
       'Post a meme in general, I dare you 😎👍',
   '3. Don\'t only self promote':
       'If you are only here for self-promotion, this will result in a ban.',

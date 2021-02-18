@@ -289,7 +289,7 @@ packages:
     source: hosted
     version: "4.0.0"
   logging:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       name: logging
       url: "https://pub.dartlang.org"

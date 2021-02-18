@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
-const nomacColor = '#E91E63';
+const nomacColor = '#B972DA';
 final nomacDiscordColor = DiscordColor.fromHexString(nomacColor);
 
 const warningColor = '#E91E63';

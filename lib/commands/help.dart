@@ -15,7 +15,7 @@ class Help extends Script {
           description: 'Gives help innit',
           example: 'bruhhhh',
           match: 'help',
-          adminOnly: true,
+          adminOnly: false,
           type: NomacCommandType.command,
         );
 

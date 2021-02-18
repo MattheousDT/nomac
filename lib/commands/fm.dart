@@ -1,4 +1,5 @@
 import 'package:dotenv/dotenv.dart' show env;
+import 'package:nomac/util/escape_markdown.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../api/lastfm_api.dart';
@@ -41,6 +42,7 @@ class LastFm extends Script {
         'period',
         abbr: 'p',
         allowed: ['7day', '1month', '3month', '12month', 'overall'],
+        defaultsTo: '7day',
       );
   }
 
@@ -48,7 +50,7 @@ class LastFm extends Script {
   Future<Message> cb(context, message, args) async {
     final command = args.command?.name;
     String? user = args['user'];
-    String? period = args['period'];
+    String period = args['period'];
 
     // If username is not provided
     if (user == null) {
@@ -70,19 +72,15 @@ class LastFm extends Script {
         author.name = getEmbedTitle();
         author.iconUrl = bot.app.iconUrl();
       })
-      ..addFooter((footer) {
-        footer.text = 'View full stats on last.fm';
-      })
-      ..color = nomacDiscordColor;
+      ..color = nomacDiscordColor
+      ..title = 'last.fm/user/${escapeMarkdown(user ?? '')}';
 
     switch (command) {
       case 'artists':
         try {
-          var data = await fm.getTopArtists(user!, period ?? 'overall');
+          var data = await fm.getTopArtists(user!, period);
 
-          embed
-            ..title = 'View $user\'s profile'
-            ..url = 'https://last.fm/user/$user';
+          embed..url = 'https://last.fm/user/$user';
           data.forEach(
             (e) => embed.addField(
                 field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
@@ -93,11 +91,10 @@ class LastFm extends Script {
         break;
       case 'albums':
         try {
-          var data = await fm.getTopAlbums(user!, period ?? 'overall');
+          var data = await fm.getTopAlbums(user!, period);
 
           embed
             ..thumbnailUrl = data[0].imageUrl
-            ..title = 'View $user\'s profile'
             ..url = 'https://last.fm/user/$user';
           data.forEach(
             (e) => embed.addField(
@@ -118,15 +115,16 @@ class LastFm extends Script {
           throw NomacException(err.toString());
         }
       case 'collage':
+        context.channel.startTypingLoop();
         try {
-          return context.enterTypingState(() async {
-            var img = await getLastFmCollage(user!, period ?? '7day');
-            return context.channel.sendMessage(
-              files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
-              content: '',
-            );
-          });
+          var img = await getLastFmCollage(user!, period);
+          context.channel.stopTypingLoop();
+          return context.channel.sendMessage(
+            files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
+            content: '',
+          );
         } catch (err) {
+          context.channel.stopTypingLoop();
           rethrow;
         }
       case 'recent':
@@ -135,14 +133,14 @@ class LastFm extends Script {
 
           embed
             ..thumbnailUrl = data[0].imageUrl
-            ..title = 'View $user\'s profile'
             ..url = 'https://last.fm/user/$user'
             ..addField(
-                field: EmbedFieldBuilder('Current',
-                    '${data[0].name} - ${data[0].artistName} [${data[0].albumName}]'))
+                field: EmbedFieldBuilder(
+                    data[0].nowPlaying ? 'Currently playing' : 'Most recent',
+                    '${data[0].name} - ${data[0].artistName}\n*${data[0].albumName}*'))
             ..addField(
                 field: EmbedFieldBuilder('Previous',
-                    '${data[1].name} - ${data[1].artistName} [${data[1].albumName}]'));
+                    '${data[1].name} - ${data[1].artistName}\n*${data[1].albumName}*'));
         } catch (err) {
           throw NomacException('Maybe your username is wrong?');
         }

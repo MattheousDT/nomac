@@ -1,8 +1,11 @@
+import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../models/user.dart';
 
 class UserService {
+  final Logger _logger = Logger('NOMAC | UserService');
+
   final Db db;
   final String collectionName = 'users';
 
@@ -25,7 +28,7 @@ class UserService {
       await db.collection(collectionName).insert(user.toJson());
       return true;
     } catch (err) {
-      print(err);
+      _logger.severe(err);
       return false;
     }
   }
@@ -56,7 +59,7 @@ class UserService {
           .remove(where.eq('discord_id', user.discordId));
       return true;
     } catch (err) {
-      print(err);
+      _logger.severe(err);
       return false;
     }
   }

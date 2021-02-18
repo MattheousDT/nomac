@@ -1,10 +1,11 @@
 include: package:pedantic/analysis_options.yaml
 
-# linter:
-#   rules:
-#     prefer_single_quotes: false
-#     prefer_double_quotes: true
+linter:
+  rules:
+    - avoid_print
 
 analyzer:
+  errors:
+    import_of_legacy_library_into_null_safe: ignore
   exclude:
     - lib_old/**/*.dart

@@ -1,4 +1,5 @@
-import 'package:dotenv/dotenv.dart' show env, load;
+import 'package:dotenv/dotenv.dart' show load;
+import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
@@ -10,9 +11,9 @@ import 'service_locator.dart';
 
 void main(List<String> arguments) async {
   load();
+  var logger = Logger('NOMAC');
 
   await initServiceLocator();
-
   var bot = di<Nyxx>();
 
   var db = di<Db>();
@@ -22,16 +23,16 @@ void main(List<String> arguments) async {
   commands.where((e) => e.type == NomacCommandType.command).forEach((e) {
     e.registerArgs();
     commander.registerCommand(e.match, e.run);
-    print('Registered command, ${e.name}');
+    logger.fine('Registered command, ${e.name}');
 
     e.matchAliases?.forEach(((alias) {
       e.registerArgs();
       commander.registerCommand(alias, e.run);
-      print('Registered command alias, $alias');
+      logger.fine('Registered command alias, $alias');
     }));
   });
 
-  print('Finished registering commands!');
+  logger.finer('Finished registering commands!');
 
   bot.onReady.listen((event) {
     bot.setPresence(PresenceBuilder.of(
