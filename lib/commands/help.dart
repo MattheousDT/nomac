@@ -3,9 +3,6 @@ import 'package:nyxx/nyxx.dart';
 import '../commands.dart';
 import '../constants.dart';
 import '../models/script.dart';
-import '../service_locator.dart';
-
-var bot = di<Nyxx>();
 
 class Help extends Script {
   Help()

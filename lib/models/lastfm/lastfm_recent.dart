@@ -1,14 +1,9 @@
 class LastFmRecent {
   final String url;
-
   final String name;
-
   final String artistName;
-
   final String albumName;
-
   final String imageUrl;
-
   final bool nowPlaying;
 
   LastFmRecent({
