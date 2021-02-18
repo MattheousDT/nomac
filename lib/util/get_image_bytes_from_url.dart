@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
-Future<Uint8List> getImageBytesFromUrl(String url) =>
-    http.get(url).then((x) => x.bodyBytes);
+import '../service_locator.dart';
+
+final _client = di<Client>();
+
+Future<Uint8List> getImageBytesFromUrl(String url) => _client.get(url).then((x) => x.bodyBytes);

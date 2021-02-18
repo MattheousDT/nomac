@@ -1,18 +1,12 @@
-import 'package:dotenv/dotenv.dart' show env;
-import 'package:nomac/util/escape_markdown.dart';
 import 'package:nyxx/nyxx.dart';
 
-import '../api/lastfm_api.dart';
-import '../api/lastfm_collage.dart';
 import '../constants.dart';
 import '../models/script.dart';
 import '../models/user.dart';
 import '../service_locator.dart';
+import '../services/lastfm_service.dart';
 import '../services/user_service.dart';
-
-var fm = LastFmApi(env['LASTFM_TOKEN']!);
-var bot = di<Nyxx>();
-var userService = di<UserService>();
+import '../util/escape_markdown.dart';
 
 class LastFm extends Script {
   LastFm()
@@ -23,11 +17,13 @@ class LastFm extends Script {
               'Gets information from last.fm.\nIf no username is explicitly given, it will use the one that you set with\n`${prefix}fm set --user <username>`',
           example: '${prefix}fm artists --period 1month',
           match: 'fm',
-          icon:
-              'https://cdn2.iconfinder.com/data/icons/social-icon-3/512/social_style_3_lastfm-512.png',
+          icon: 'https://cdn2.iconfinder.com/data/icons/social-icon-3/512/social_style_3_lastfm-512.png',
           adminOnly: false,
           type: NomacCommandType.command,
         );
+
+  final _userService = di<UserService>();
+  final _lastFmService = di<LastFmService>();
 
   @override
   void registerArgs() {
@@ -55,8 +51,7 @@ class LastFm extends Script {
     // If username is not provided
     if (user == null) {
       // Try grabbing from the DB
-      var dbUser =
-          await userService.getUserByDiscordId(context.author.id.toString());
+      var dbUser = await _userService.getUserByDiscordId(context.author.id.toString());
 
       // If no user exists in the DB
       if (dbUser == null) {
@@ -78,12 +73,11 @@ class LastFm extends Script {
     switch (command) {
       case 'artists':
         try {
-          var data = await fm.getTopArtists(user!, period);
+          var data = await _lastFmService.getTopArtists(user!, period);
 
           embed..url = 'https://last.fm/user/$user';
           data.forEach(
-            (e) => embed.addField(
-                field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
+            (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
           );
         } catch (err) {
           throw NomacException('Maybe your username is wrong?');
@@ -91,14 +85,13 @@ class LastFm extends Script {
         break;
       case 'albums':
         try {
-          var data = await fm.getTopAlbums(user!, period);
+          var data = await _lastFmService.getTopAlbums(user!, period);
 
           embed
             ..thumbnailUrl = data[0].imageUrl
             ..url = 'https://last.fm/user/$user';
           data.forEach(
-            (e) => embed.addField(
-                field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
+            (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
           );
         } catch (err) {
           throw NomacException('Maybe your username is wrong?');
@@ -106,18 +99,16 @@ class LastFm extends Script {
         break;
       case 'set':
         try {
-          var nomacUser = NomacUser(
-              discordId: context.author.id.toString(), lastFmUsername: user);
-          await userService.updateUser(nomacUser);
-          return context.reply(
-              content: 'Your last.fm username has been set to "$user"');
+          var nomacUser = NomacUser(discordId: context.author.id.toString(), lastFmUsername: user);
+          await _userService.updateUser(nomacUser);
+          return context.reply(content: 'Your last.fm username has been set to "$user"');
         } catch (err) {
           throw NomacException(err.toString());
         }
       case 'collage':
         context.channel.startTypingLoop();
         try {
-          var img = await getLastFmCollage(user!, period);
+          var img = await _lastFmService.getCollage(user!, period);
           context.channel.stopTypingLoop();
           return context.channel.sendMessage(
             files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
@@ -129,25 +120,23 @@ class LastFm extends Script {
         }
       case 'recent':
         try {
-          var data = await fm.getRecent(user!);
+          var data = await _lastFmService.getRecent(user!);
 
           embed
             ..thumbnailUrl = data[0].imageUrl
             ..url = 'https://last.fm/user/$user'
             ..addField(
-                field: EmbedFieldBuilder(
-                    data[0].nowPlaying ? 'Currently playing' : 'Most recent',
+                field: EmbedFieldBuilder(data[0].nowPlaying ? 'Currently playing' : 'Most recent',
                     '${data[0].name} - ${data[0].artistName}\n*${data[0].albumName}*'))
             ..addField(
-                field: EmbedFieldBuilder('Previous',
-                    '${data[1].name} - ${data[1].artistName}\n*${data[1].albumName}*'));
+                field:
+                    EmbedFieldBuilder('Previous', '${data[1].name} - ${data[1].artistName}\n*${data[1].albumName}*'));
         } catch (err) {
           throw NomacException('Maybe your username is wrong?');
         }
         break;
       default:
-        throw NomacException(
-            'This is not a valid command. Type `${prefix}fm --help` for a list of commands');
+        throw NomacException('This is not a valid command. Type `${prefix}fm --help` for a list of commands');
     }
 
     return context.channel.sendMessage(embed: embed);

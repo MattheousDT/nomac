@@ -27,8 +27,7 @@ class Info extends Script {
 
   EmbedBuilder _welcomeEmbed(CommandContext context) {
     var embed = EmbedBuilder()
-      ..imageUrl =
-          'https://cdn.discordapp.com/attachments/809816006771867669/811995773868441631/unknown.png'
+      ..imageUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811995773868441631/unknown.png'
       ..color = nomacDiscordColor;
 
     return embed;
@@ -36,8 +35,7 @@ class Info extends Script {
 
   EmbedBuilder _rulesEmbed(CommandContext context) {
     var embed = EmbedBuilder()
-      ..thumbnailUrl =
-          'https://cdn.discordapp.com/attachments/809816006771867669/811987970243559444/unknown.png'
+      ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811987970243559444/unknown.png'
       ..color = nomacDiscordColor
       ..title = 'What are the rules?';
 
@@ -53,21 +51,17 @@ class Info extends Script {
 
   EmbedBuilder _channelsEmbed(CommandContext context) {
     var embed = EmbedBuilder()
-      ..thumbnailUrl =
-          'https://cdn.discordapp.com/attachments/809816006771867669/812007872451313664/unknown.png'
+      ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/812007872451313664/unknown.png'
       ..color = nomacDiscordColor
       ..title = 'What are all these channels?'
-      ..description = _channels.entries
-          .map((element) => '<#${element.key}>\n${element.value}')
-          .join('\n\n');
+      ..description = _channels.entries.map((element) => '<#${element.key}>\n${element.value}').join('\n\n');
 
     return embed;
   }
 
   EmbedBuilder _botEmbed(CommandContext context) {
     var embed = EmbedBuilder()
-      ..thumbnailUrl =
-          'https://cdn.discordapp.com/attachments/809816006771867669/811999080208793670/main-nomac.png'
+      ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811999080208793670/main-nomac.png'
       ..color = nomacDiscordColor
       ..title = 'NOMAC - Our Discord Bot!'
       ..url = 'https://github.com/MattheousDT/nomac'
@@ -81,14 +75,11 @@ class Info extends Script {
 const _rules = {
   '1. Don\'t be a dick':
       'Pretty self explanatory. This server is extremely chill so please don\'t make others feel unwelcome',
-  '2. Use the channels for their intended purposes':
-      'Post a meme in general, I dare you 😎👍',
-  '3. Don\'t only self promote':
-      'If you are only here for self-promotion, this will result in a ban.',
+  '2. Use the channels for their intended purposes': 'Post a meme in general, I dare you 😎👍',
+  '3. Don\'t only self promote': 'If you are only here for self-promotion, this will result in a ban.',
   '4. No prejudice of any kind towards any other members':
       'This means homophobia, sexism, transphobia, xenophobia etc.',
-  '5. Keep it clean':
-      'No NSFW media in this Christian server™. There are people of all ages here',
+  '5. Keep it clean': 'No NSFW media in this Christian server™. There are people of all ages here',
 };
 
 const _channels = {
@@ -98,11 +89,9 @@ const _channels = {
   '285057239159668736':
       'Where you can have a general discussion about Dream Theater, or don\'t. I don\'t care, I swear... 😢',
   // #music-collabs
-  '441336737604829185':
-      'Where you can collaborate with others or just share some music you\'ve been making',
+  '441336737604829185': 'Where you can collaborate with others or just share some music you\'ve been making',
   // #meme-theater
-  '285108756684079104':
-      'Where you can find le dankest of le may mays, like mike > mike lmao xd',
+  '285108756684079104': 'Where you can find le dankest of le may mays, like mike > mike lmao xd',
   // noipad
   '355471458505326602': 'Sherinian, Portnoy et al. shitposting',
   // no-mike

@@ -12,9 +12,7 @@ class UserService {
   UserService(this.db);
 
   Future<NomacUser?> getUserByDiscordId(String discordId) async {
-    Map<String, dynamic>? result = await db
-        .collection(collectionName)
-        .findOne(where.eq('discord_id', discordId));
+    Map<String, dynamic>? result = await db.collection(collectionName).findOne(where.eq('discord_id', discordId));
 
     if (result == null) {
       return null;
@@ -36,8 +34,7 @@ class UserService {
   Future<NomacUser> updateUser(NomacUser user) async {
     var coll = db.collection(collectionName);
 
-    Map<String, dynamic> result =
-        await coll.findOne(where.eq('discord_id', user.discordId));
+    Map<String, dynamic> result = await coll.findOne(where.eq('discord_id', user.discordId));
 
     if (result == null) {
       await createUser(user);
@@ -54,9 +51,7 @@ class UserService {
 
   Future<bool> deleteUser(NomacUser user) async {
     try {
-      await db
-          .collection(collectionName)
-          .remove(where.eq('discord_id', user.discordId));
+      await db.collection(collectionName).remove(where.eq('discord_id', user.discordId));
       return true;
     } catch (err) {
       _logger.severe(err);

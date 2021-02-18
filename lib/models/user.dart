@@ -7,11 +7,7 @@ part 'user.g.dart';
 
 @JsonSerializable(includeIfNull: false)
 class NomacUser {
-  @JsonKey(
-    name: '_id',
-    fromJson: objectIdFromJson,
-    toJson: objectIdToJson,
-  )
+  @JsonKey(name: '_id', fromJson: objectIdFromJson, toJson: objectIdToJson)
   final ObjectId? id;
 
   @JsonKey(name: 'discord_id', required: true)
@@ -22,8 +18,7 @@ class NomacUser {
 
   NomacUser({this.id, required this.discordId, this.lastFmUsername});
 
-  factory NomacUser.fromJson(Map<String, dynamic> json) =>
-      _$NomacUserFromJson(json);
+  factory NomacUser.fromJson(Map<String, dynamic> json) => _$NomacUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$NomacUserToJson(this);
 }

@@ -8,8 +8,6 @@ import 'package:nyxx_commander/commander.dart';
 import '../constants.dart';
 import '../service_locator.dart';
 
-var bot = di<Nyxx>();
-
 enum NomacCommandType {
   command,
   startsWith,
@@ -44,11 +42,12 @@ abstract class Script {
     required this.type,
   });
 
+  Nyxx bot = di<Nyxx>();
+
   Future<Message> run(CommandContext context, String message) async {
     // If command is admin only
     if (adminOnly && context.author.id.toString() != env['ADMIN_ID']) {
-      return context.reply(
-          content: 'You are not authorised to use this command');
+      return context.reply(content: 'You are not authorised to use this command');
     }
 
     // Try and parse the arguments
@@ -77,8 +76,7 @@ abstract class Script {
     return callbackResult;
   }
 
-  ArgParser argParser = ArgParser()
-    ..addFlag('help', abbr: 'h', negatable: false);
+  ArgParser argParser = ArgParser()..addFlag('help', abbr: 'h', negatable: false);
 
   FutureOr<void> registerArgs() => null;
 
@@ -105,9 +103,7 @@ abstract class Script {
     if (argParser.commands.isNotEmpty) {
       embed.addField(
         name: 'Commands',
-        content: argParser.commands.keys
-            .map((sub) => '`${prefix}$match ${sub} [options]`')
-            .join('\n'),
+        content: argParser.commands.keys.map((sub) => '`${prefix}$match ${sub} [options]`').join('\n'),
       );
     }
 

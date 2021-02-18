@@ -32,9 +32,7 @@ class Help extends Script {
     var pages = (total / 6).ceil();
 
     if (current > pages) {
-      return context.reply(
-          content:
-              'There ${pages == 1 ? 'is' : 'are'} only $pages page${pages == 1 ? '' : 's'}');
+      return context.reply(content: 'There ${pages == 1 ? 'is' : 'are'} only $pages page${pages == 1 ? '' : 's'}');
     }
 
     var embed = EmbedBuilder()

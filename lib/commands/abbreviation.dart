@@ -24,8 +24,7 @@ class Abbreviation extends Script {
   Future<Message> cb(context, message, args) async {
     if (args.command?.name == 'list') {
       return context.reply(
-        content:
-            '<https://github.com/MattheousDT/nomac/blob/master/lib/commands/abbreviation.dart#L56>',
+        content: '<https://github.com/MattheousDT/nomac/blob/master/lib/commands/abbreviation.dart#L55>',
       );
     }
 
@@ -33,8 +32,7 @@ class Abbreviation extends Script {
     try {
       abbr = args.arguments.first.toLowerCase();
     } catch (_) {
-      throw NomacException(
-          'No abbreviation provided.\nFor example, try `${prefix}abbr sfam`');
+      throw NomacException('No abbreviation provided.\nFor example, try `${prefix}abbr sfam`');
     }
 
     Set<String> key;
