@@ -45,7 +45,7 @@ class Help extends Script {
       ..addFooter((footer) {
         footer.text = (current == pages
             ? 'You have reached the final page'
-            : 'Page $current/$pages. Use `!help ${current + 1}` for the next page');
+            : 'Page $current/$pages. Use `${prefix}help ${current + 1}` for the next page');
       })
       ..color = nomacDiscordColor;
 
@@ -53,7 +53,7 @@ class Help extends Script {
           (e) => embed.addField(
             field: EmbedFieldBuilder(
               e.name,
-              '${e.description}\n```!${e.match} --help```',
+              '${e.description}\n```${prefix}${e.match} --help```',
             ),
           ),
         );

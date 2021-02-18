@@ -1,13 +1,13 @@
 import 'package:dotenv/dotenv.dart' show env;
-import 'package:nomac/services/user_service.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../api/lastfm_api.dart';
 import '../api/lastfm_collage.dart';
 import '../constants.dart';
-import '../models/user.dart';
 import '../models/script.dart';
+import '../models/user.dart';
 import '../service_locator.dart';
+import '../services/user_service.dart';
 
 var fm = LastFmApi(env['LASTFM_TOKEN']!);
 var bot = di<Nyxx>();
@@ -19,8 +19,8 @@ class LastFm extends Script {
           authorId: '190914446774763520',
           name: 'Last.fm',
           description:
-              'Gets information from last.fm.\nIf no username is explicitly given, it will use the one that you set with\n`!fm set --user <username>`',
-          example: '!fm artists --period 1month',
+              'Gets information from last.fm.\nIf no username is explicitly given, it will use the one that you set with\n`${prefix}fm set --user <username>`',
+          example: '${prefix}fm artists --period 1month',
           match: 'fm',
           icon:
               'https://cdn2.iconfinder.com/data/icons/social-icon-3/512/social_style_3_lastfm-512.png',
@@ -59,7 +59,7 @@ class LastFm extends Script {
       // If no user exists in the DB
       if (dbUser == null) {
         throw NomacException(
-            'Username not provided. Try providing a username or use `!fm set --user <username>` to save one');
+            'Username not provided. Try providing a username or use `${prefix}fm set --user <username>` to save one');
       }
 
       user = dbUser.lastFmUsername;
@@ -149,7 +149,7 @@ class LastFm extends Script {
         break;
       default:
         throw NomacException(
-            '$command is not a valid command. Type `!fm --help` for a list of commands');
+            'This is not a valid command. Type `${prefix}fm --help` for a list of commands');
     }
 
     return context.channel.sendMessage(embed: embed);

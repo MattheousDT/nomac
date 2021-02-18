@@ -1,5 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
+import '../constants.dart';
 import '../models/script.dart';
 
 class Abbreviation extends Script {
@@ -8,7 +9,7 @@ class Abbreviation extends Script {
           authorId: '190914446774763520',
           name: 'Abbreviation',
           description: 'Provides the meaning of a song/album/etc. abbreviation',
-          example: '!abbr sfam',
+          example: '${prefix}abbr sfam',
           match: 'abbr',
           adminOnly: false,
           type: NomacCommandType.command,
@@ -33,7 +34,7 @@ class Abbreviation extends Script {
       abbr = args.arguments.first.toLowerCase();
     } catch (_) {
       throw NomacException(
-          'No abbreviation provided.\nFor example, try `!abbr sfam`');
+          'No abbreviation provided.\nFor example, try `${prefix}abbr sfam`');
     }
 
     Set<String> key;

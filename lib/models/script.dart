@@ -98,7 +98,7 @@ abstract class Script {
         author.iconUrl = icon ?? bot.app.iconUrl();
       })
       ..addFooter((footer) {
-        footer.text = 'Usage: !$match <command> [options]';
+        footer.text = 'Usage: ${prefix}$match <command> [options]';
       })
       ..addField(name: 'Description', content: description);
 
@@ -106,7 +106,7 @@ abstract class Script {
       embed.addField(
         name: 'Commands',
         content: argParser.commands.keys
-            .map((sub) => '`!$match ${sub} [options]`')
+            .map((sub) => '`${prefix}$match ${sub} [options]`')
             .join('\n'),
       );
     }
@@ -131,7 +131,7 @@ abstract class Script {
         author.iconUrl = icon ?? bot.app.iconUrl();
       })
       ..addFooter((footer) {
-        footer.text = 'Type `!$match --help` for help';
+        footer.text = 'Type `${prefix}$match --help` for help';
       })
       ..title = 'NOMAC encountered an error'
       ..description = message;

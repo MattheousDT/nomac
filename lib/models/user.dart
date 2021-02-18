@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:nomac/util/mongo_id_parse.dart';
+
+import '../util/mongo_id_parse.dart';
 
 part 'user.g.dart';
 

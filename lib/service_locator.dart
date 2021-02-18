@@ -3,19 +3,25 @@ import 'dart:io';
 import 'package:dotenv/dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:nomac/services/user_service.dart';
 import 'package:nyxx/nyxx.dart';
 
 import 'constants.dart';
+import 'services/user_service.dart';
 
 final di = GetIt.instance;
 
 /// Initialise dependency injection
 Future<void> initServiceLocator() async {
   final botToken = env['BOT_TOKEN'];
+  final mongoConnectionString = env['MONGO_CONNECTION_STRING'];
 
   if (botToken == null) {
     print('Bot token not added to environment variables');
+    exit(1);
+  }
+
+  if (mongoConnectionString == null) {
+    print('Mongo connection string not added to environment variables');
     exit(1);
   }
 
@@ -27,8 +33,8 @@ Future<void> initServiceLocator() async {
       ignoreExceptions: isProduction,
     ),
   );
-  // TODO: Make database connection string an env var
-  di.registerLazySingleton<Db>(() => Db('mongodb://localhost:27017/nomac'));
+
+  di.registerLazySingleton<Db>(() => Db(mongoConnectionString));
 
   // Services/Connectors
   di.registerLazySingleton<UserService>(() => UserService(di()));

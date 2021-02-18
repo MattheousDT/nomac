@@ -4,6 +4,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
 import 'commands.dart';
+import 'constants.dart';
 import 'models/script.dart';
 import 'service_locator.dart';
 
@@ -17,7 +18,7 @@ void main(List<String> arguments) async {
   var db = di<Db>();
   await db.open();
 
-  var commander = Commander(bot, prefix: '!');
+  var commander = Commander(bot, prefix: prefix);
   commands.where((e) => e.type == NomacCommandType.command).forEach((e) {
     e.registerArgs();
     commander.registerCommand(e.match, e.run);
