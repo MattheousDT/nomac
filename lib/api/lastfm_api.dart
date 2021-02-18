@@ -74,7 +74,7 @@ class LastFmApi {
         'method': method,
       },
     );
-    return http.get(uri).then((res) => jsonDecode(res.body));
+    return http.get(uri).then((res) => json.decode(utf8.decode(res.bodyBytes)));
   }
 
   Future<List<LastFmArtist>> getTopArtists(String user, String period) async {
