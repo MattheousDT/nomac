@@ -33,10 +33,7 @@ class Help extends Script {
     }
 
     var embed = EmbedBuilder()
-      ..addAuthor((author) {
-        author.name = getEmbedTitle();
-        author.iconUrl = bot.app.iconUrl();
-      })
+      ..author = embedAuthor
       ..addFooter((footer) {
         footer.text = (current == pages
             ? 'You have reached the final page'

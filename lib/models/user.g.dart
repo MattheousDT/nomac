@@ -7,11 +7,10 @@ part of 'user.dart';
 // **************************************************************************
 
 NomacUser _$NomacUserFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['discord_id']);
   return NomacUser(
     id: objectIdFromJson(json['_id'] as ObjectId),
     discordId: json['discord_id'] as String,
-    lastFmUsername: json['lastfm_username'] as String?,
+    lastfmUsername: json['lastfm_username'] as String?,
   );
 }
 
@@ -26,6 +25,6 @@ Map<String, dynamic> _$NomacUserToJson(NomacUser instance) {
 
   writeNotNull('_id', objectIdToJson(instance.id));
   val['discord_id'] = instance.discordId;
-  writeNotNull('lastfm_username', instance.lastFmUsername);
+  writeNotNull('lastfm_username', instance.lastfmUsername);
   return val;
 }

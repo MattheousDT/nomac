@@ -5,18 +5,15 @@ import '../util/mongo_id_parse.dart';
 
 part 'user.g.dart';
 
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: false, fieldRename: FieldRename.snake)
 class NomacUser {
   @JsonKey(name: '_id', fromJson: objectIdFromJson, toJson: objectIdToJson)
   final ObjectId? id;
 
-  @JsonKey(name: 'discord_id', required: true)
   final String discordId;
+  final String? lastfmUsername;
 
-  @JsonKey(name: 'lastfm_username')
-  final String? lastFmUsername;
-
-  NomacUser({this.id, required this.discordId, this.lastFmUsername});
+  NomacUser({this.id, required this.discordId, this.lastfmUsername});
 
   factory NomacUser.fromJson(Map<String, dynamic> json) => _$NomacUserFromJson(json);
 

@@ -80,7 +80,9 @@ abstract class Script {
 
   FutureOr<void> registerArgs() => null;
 
-  String getEmbedTitle() => 'NOMAC // $name';
+  EmbedAuthorBuilder get embedAuthor => EmbedAuthorBuilder()
+    ..name = 'NOMAC // $name'
+    ..iconUrl = icon ?? bot.app.iconUrl();
 
   Future<Message> cb(CommandContext context, String message, ArgResults args) {
     return context.channel.sendMessage(content: 'Base command!');
@@ -91,10 +93,7 @@ abstract class Script {
   Future<Message> _displayHelp(CommandContext context) {
     var embed = EmbedBuilder()
       ..color = nomacDiscordColor
-      ..addAuthor((author) {
-        author.name = getEmbedTitle();
-        author.iconUrl = icon ?? bot.app.iconUrl();
-      })
+      ..author = embedAuthor
       ..addFooter((footer) {
         footer.text = 'Usage: ${prefix}$match <command> [options]';
       })
@@ -122,10 +121,7 @@ abstract class Script {
   Future<Message> _displayError(CommandContext context, String message) {
     var embed = EmbedBuilder()
       ..color = DiscordColor.yellow
-      ..addAuthor((author) {
-        author.name = getEmbedTitle();
-        author.iconUrl = icon ?? bot.app.iconUrl();
-      })
+      ..author = embedAuthor
       ..addFooter((footer) {
         footer.text = 'Type `${prefix}$match --help` for help';
       })

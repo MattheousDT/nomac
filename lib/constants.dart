@@ -9,3 +9,14 @@ final warningDiscordColor = DiscordColor.fromHexString(nomacColor);
 final isProduction = bool.fromEnvironment('dart.vm.product');
 
 const prefix = '!';
+
+const roles = [
+  'europe',
+  'americas',
+  'asia/oce',
+  'guitar',
+  'bass',
+  'drums',
+  'keyboard',
+  'vocals',
+];

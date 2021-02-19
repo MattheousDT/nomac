@@ -7,6 +7,7 @@ import '../service_locator.dart';
 import '../services/lastfm_service.dart';
 import '../services/user_service.dart';
 import '../util/escape_markdown.dart';
+import 'package:nyxx_commander/commander.dart';
 
 class LastFm extends Script {
   LastFm()
@@ -54,91 +55,107 @@ class LastFm extends Script {
       var dbUser = await _userService.getUserByDiscordId(context.author.id.toString());
 
       // If no user exists in the DB
-      if (dbUser == null) {
+      if (dbUser == null || dbUser.lastfmUsername == null) {
         throw NomacException(
             'Username not provided. Try providing a username or use `${prefix}fm set --user <username>` to save one');
       }
 
-      user = dbUser.lastFmUsername;
+      user = dbUser.lastfmUsername!;
     }
 
     var embed = EmbedBuilder()
-      ..addAuthor((author) {
-        author.name = getEmbedTitle();
-        author.iconUrl = bot.app.iconUrl();
-      })
+      ..author = embedAuthor
       ..color = nomacDiscordColor
-      ..title = 'last.fm/user/${escapeMarkdown(user ?? '')}';
+      ..title = 'last.fm/user/${escapeMarkdown(user)}';
 
     switch (command) {
       case 'artists':
-        try {
-          var data = await _lastFmService.getTopArtists(user!, period);
-
-          embed..url = 'https://last.fm/user/$user';
-          data.forEach(
-            (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
-          );
-        } catch (err) {
-          throw NomacException('Maybe your username is wrong?');
-        }
+        await _artists(user, period, embed);
         break;
       case 'albums':
-        try {
-          var data = await _lastFmService.getTopAlbums(user!, period);
-
-          embed
-            ..thumbnailUrl = data[0].imageUrl
-            ..url = 'https://last.fm/user/$user';
-          data.forEach(
-            (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
-          );
-        } catch (err) {
-          throw NomacException('Maybe your username is wrong?');
-        }
+        await _albums(user, period, embed);
         break;
       case 'set':
-        try {
-          var nomacUser = NomacUser(discordId: context.author.id.toString(), lastFmUsername: user);
-          await _userService.updateUser(nomacUser);
-          return context.reply(content: 'Your last.fm username has been set to "$user"');
-        } catch (err) {
-          throw NomacException(err.toString());
-        }
+        return await _set(user, context);
       case 'collage':
-        context.channel.startTypingLoop();
-        try {
-          var img = await _lastFmService.getCollage(user!, period);
-          context.channel.stopTypingLoop();
-          return context.channel.sendMessage(
-            files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
-            content: '',
-          );
-        } catch (err) {
-          context.channel.stopTypingLoop();
-          rethrow;
-        }
+        return await _collage(user, context, period);
       case 'recent':
-        try {
-          var data = await _lastFmService.getRecent(user!);
-
-          embed
-            ..thumbnailUrl = data[0].imageUrl
-            ..url = 'https://last.fm/user/$user'
-            ..addField(
-                field: EmbedFieldBuilder(data[0].nowPlaying ? 'Currently playing' : 'Most recent',
-                    '${data[0].name} - ${data[0].artistName}\n*${data[0].albumName}*'))
-            ..addField(
-                field:
-                    EmbedFieldBuilder('Previous', '${data[1].name} - ${data[1].artistName}\n*${data[1].albumName}*'));
-        } catch (err) {
-          throw NomacException('Maybe your username is wrong?');
-        }
+        await _recent(user, embed);
         break;
       default:
         throw NomacException('This is not a valid command. Type `${prefix}fm --help` for a list of commands');
     }
 
     return context.channel.sendMessage(embed: embed);
+  }
+
+  Future<void> _artists(String user, String period, EmbedBuilder embed) async {
+    try {
+      var data = await _lastFmService.getTopArtists(user, period);
+
+      embed..url = 'https://last.fm/user/$user';
+      data.forEach(
+        (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
+      );
+    } catch (err) {
+      throw NomacException('Maybe your username is wrong?');
+    }
+  }
+
+  Future<void> _albums(String user, String period, EmbedBuilder embed) async {
+    try {
+      var data = await _lastFmService.getTopAlbums(user, period);
+
+      embed
+        ..thumbnailUrl = data[0].imageUrl
+        ..url = 'https://last.fm/user/$user';
+      data.forEach(
+        (e) => embed.addField(field: EmbedFieldBuilder(e.name, '${e.playCount} plays')),
+      );
+    } catch (err) {
+      throw NomacException('Maybe your username is wrong?');
+    }
+  }
+
+  Future<Message> _set(String user, CommandContext context) async {
+    try {
+      var nomacUser = NomacUser(discordId: context.author.id.toString(), lastfmUsername: user);
+      await _userService.updateUser(nomacUser);
+      return context.reply(content: 'Your last.fm username has been set to "$user"');
+    } catch (err) {
+      throw NomacException(err.toString());
+    }
+  }
+
+  Future<Message> _collage(String user, CommandContext context, String period) async {
+    context.channel.startTypingLoop();
+    try {
+      var img = await _lastFmService.getCollage(user, period);
+      context.channel.stopTypingLoop();
+      return context.channel.sendMessage(
+        files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
+        content: '',
+      );
+    } catch (err) {
+      context.channel.stopTypingLoop();
+      rethrow;
+    }
+  }
+
+  Future<void> _recent(String user, EmbedBuilder embed) async {
+    try {
+      var data = await _lastFmService.getRecent(user);
+
+      embed
+        ..thumbnailUrl = data[0].imageUrl
+        ..url = 'https://last.fm/user/$user'
+        ..addField(
+            field: EmbedFieldBuilder(data[0].nowPlaying ? 'Currently playing' : 'Most recent',
+                '${data[0].name} - ${data[0].artistName}\n*${data[0].albumName}*'))
+        ..addField(
+            field: EmbedFieldBuilder('Previous', '${data[1].name} - ${data[1].artistName}\n*${data[1].albumName}*'));
+    } catch (err) {
+      throw NomacException('Maybe your username is wrong?');
+    }
   }
 }
