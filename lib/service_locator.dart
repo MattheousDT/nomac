@@ -9,6 +9,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:puppeteer/puppeteer.dart';
 
 import 'constants.dart';
+import 'services/album_service.dart';
 import 'services/lastfm_service.dart';
 import 'services/user_service.dart';
 
@@ -52,4 +53,5 @@ Future<void> initServiceLocator() async {
   // Services/Connectors
   di.registerLazySingleton<UserService>(() => UserService(di()));
   di.registerLazySingleton<LastFmService>(() => LastFmService(lastFmToken, di()));
+  di.registerLazySingleton<AlbumService>(() => AlbumService(di()));
 }

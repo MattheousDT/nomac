@@ -130,6 +130,6 @@ const Map<Set<String>, String> _abbreviations = {
   {'mp'}: 'Mike Portnoy',
   {'nc'}: 'Nightmare Cinema',
   {'ds'}: 'Derek Sherinian',
-  {'jm'}: 'John Myung',
+  {'jm', 'jmx'}: 'John Myung',
   {'km'}: 'Kevin Moore',
 };
