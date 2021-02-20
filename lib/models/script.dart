@@ -46,9 +46,8 @@ abstract class Script {
   Future<Message> run(Message message, TextChannel channel, Guild guild) async {
     // If command is admin only
     if (adminOnly) {
-      var guild = message is GuildMessage ? message.guild.getFromCache()! : null;
-      var perms = await guild?.fetchMember(message.author.id).then((value) => value.effectivePermissions);
-      if (perms?.administrator == false || perms?.manageRoles == false) {
+      var perms = await guild.fetchMember(message.author.id).then((value) => value.effectivePermissions);
+      if (perms.administrator == false || perms.manageRoles == false) {
         return channel.sendMessage(
           content: 'You are not authorised to use this command',
           replyBuilder: ReplyBuilder.fromMessage(message),

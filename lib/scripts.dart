@@ -1,9 +1,9 @@
-import 'commands/abbreviation.dart';
-import 'commands/fm.dart';
-import 'commands/help.dart';
-import 'commands/info.dart';
-import 'commands/js.dart';
-import 'commands/role.dart';
+import 'scripts/abbreviation.dart';
+import 'scripts/fm.dart';
+import 'scripts/help.dart';
+import 'scripts/info.dart';
+import 'scripts/js.dart';
+import 'scripts/role.dart';
 import 'models/script.dart';
 
 // TODO: Replace with reflection
