@@ -7,11 +7,12 @@ import 'commands/role.dart';
 import 'models/script.dart';
 
 // TODO: Replace with reflection
-List<Script> commands = [
-  Abbreviation(),
-  Info(),
-  Js(),
-  Help(),
-  LastFm(),
-  Role(),
+final scripts = <Script>[
+  // Commands
+  Abbreviation()..setup(),
+  Info()..setup(),
+  Js()..setup(),
+  Help()..setup(),
+  LastFm()..setup(),
+  Role()..setup(),
 ];

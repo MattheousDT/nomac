@@ -43,34 +43,39 @@ abstract class Script {
 
   Nyxx bot = di<Nyxx>();
 
-  Future<Message> run(CommandContext context, String message) async {
+  Future<Message> run(Message message, TextChannel channel, Guild guild) async {
     // If command is admin only
     if (adminOnly) {
-      var perms = await context.member?.effectivePermissions;
+      var guild = message is GuildMessage ? message.guild.getFromCache()! : null;
+      var perms = await guild?.fetchMember(message.author.id).then((value) => value.effectivePermissions);
       if (perms?.administrator == false || perms?.manageRoles == false) {
-        return context.reply(content: 'You are not authorised to use this command');
+        return channel.sendMessage(
+          content: 'You are not authorised to use this command',
+          replyBuilder: ReplyBuilder.fromMessage(message),
+        );
       }
     }
 
     // Try and parse the arguments
     late ArgResults args;
     try {
-      args = argParser.parse(_getArgs(message));
+      args = argParser.parse(_getArgs(message.content));
     } catch (err) {
-      return _displayError(context, err.toString());
+      return _displayError(message, channel, err.toString());
     }
 
     if (args['help']) {
-      return _displayHelp(context);
+      return _displayHelp(message, channel);
     }
 
     // Else run the command
     Message callbackResult;
     try {
-      callbackResult = await cb(context, message, args);
+      callbackResult = await cb(message, channel, guild, args);
     } on NomacException catch (exception) {
       return _displayError(
-        context,
+        message,
+        channel,
         exception.message,
       );
     }
@@ -80,19 +85,21 @@ abstract class Script {
 
   ArgParser argParser = ArgParser()..addFlag('help', abbr: 'h', negatable: false);
 
-  FutureOr<void> registerArgs() => null;
+  FutureOr<void> setup() => {};
 
   EmbedAuthorBuilder get embedAuthor => EmbedAuthorBuilder()
     ..name = 'NOMAC // $name'
     ..iconUrl = icon ?? bot.app.iconUrl();
 
-  Future<Message> cb(CommandContext context, String message, ArgResults args) {
-    return context.channel.sendMessage(content: 'Base command!');
+  Future<Message> cb(Message message, TextChannel channel, Guild guild, ArgResults args) {
+    return message.channel
+        .getFromCache()!
+        .sendMessage(content: 'Base command!', replyBuilder: ReplyBuilder.fromMessage(message));
   }
 
-  List<String> _getArgs(String message) => message.split(' ')..removeAt(0);
+  List<String> _getArgs(String messageContent) => messageContent.split(' ')..removeAt(0);
 
-  Future<Message> _displayHelp(CommandContext context) {
+  Future<Message> _displayHelp(Message message, TextChannel channel) {
     var embed = EmbedBuilder()
       ..color = nomacDiscordColor
       ..author = embedAuthor
@@ -117,10 +124,10 @@ abstract class Script {
 
     embed.addField(name: 'Example', content: '```$example```');
 
-    return context.channel.sendMessage(embed: embed);
+    return channel.sendMessage(embed: embed);
   }
 
-  Future<Message> _displayError(CommandContext context, String message) {
+  Future<Message> _displayError(Message message, TextChannel channel, String errorMessage) {
     var embed = EmbedBuilder()
       ..color = DiscordColor.yellow
       ..author = embedAuthor
@@ -128,8 +135,11 @@ abstract class Script {
         footer.text = 'Type `${prefix}$match --help` for help';
       })
       ..title = 'NOMAC encountered an error'
-      ..description = message;
+      ..description = errorMessage;
 
-    return context.reply(embed: embed);
+    return channel.sendMessage(
+      embed: embed,
+      replyBuilder: ReplyBuilder.fromMessage(message),
+    );
   }
 }

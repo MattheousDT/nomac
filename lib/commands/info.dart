@@ -1,5 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_commander/commander.dart';
 
 import '../constants.dart';
 import '../models/script.dart';
@@ -17,15 +16,15 @@ class Info extends Script {
         );
 
   @override
-  Future<Message> cb(context, message, args) async {
-    await context.message.delete();
-    await context.channel.sendMessage(embed: _welcomeEmbed(context));
-    await context.channel.sendMessage(embed: _rulesEmbed(context));
-    await context.channel.sendMessage(embed: _channelsEmbed(context));
-    return await context.channel.sendMessage(embed: _botEmbed(context));
+  Future<Message> cb(message, channel, guild, args) async {
+    await message.delete();
+    await channel.sendMessage(embed: _welcomeEmbed());
+    await channel.sendMessage(embed: _rulesEmbed());
+    await channel.sendMessage(embed: _channelsEmbed());
+    return await channel.sendMessage(embed: _botEmbed());
   }
 
-  EmbedBuilder _welcomeEmbed(CommandContext context) {
+  EmbedBuilder _welcomeEmbed() {
     var embed = EmbedBuilder()
       ..imageUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811995773868441631/unknown.png'
       ..color = nomacDiscordColor;
@@ -33,7 +32,7 @@ class Info extends Script {
     return embed;
   }
 
-  EmbedBuilder _rulesEmbed(CommandContext context) {
+  EmbedBuilder _rulesEmbed() {
     var embed = EmbedBuilder()
       ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811987970243559444/unknown.png'
       ..color = nomacDiscordColor
@@ -49,7 +48,7 @@ class Info extends Script {
     return embed;
   }
 
-  EmbedBuilder _channelsEmbed(CommandContext context) {
+  EmbedBuilder _channelsEmbed() {
     var embed = EmbedBuilder()
       ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/812007872451313664/unknown.png'
       ..color = nomacDiscordColor
@@ -59,7 +58,7 @@ class Info extends Script {
     return embed;
   }
 
-  EmbedBuilder _botEmbed(CommandContext context) {
+  EmbedBuilder _botEmbed() {
     var embed = EmbedBuilder()
       ..thumbnailUrl = 'https://cdn.discordapp.com/attachments/809816006771867669/811999080208793670/main-nomac.png'
       ..color = nomacDiscordColor

@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../commands.dart';
+import '../scripts.dart';
 import '../constants.dart';
 import '../models/script.dart';
 
@@ -17,7 +17,7 @@ class Help extends Script {
         );
 
   @override
-  Future<Message> cb(context, message, args) {
+  Future<Message> cb(message, channel, guild, args) {
     int current;
     try {
       current = int.parse(args.arguments.first);
@@ -25,11 +25,14 @@ class Help extends Script {
       current = 1;
     }
 
-    var total = commands.length;
+    var total = scripts.length;
     var pages = (total / 6).ceil();
 
     if (current > pages) {
-      return context.reply(content: 'There ${pages == 1 ? 'is' : 'are'} only $pages page${pages == 1 ? '' : 's'}');
+      return channel.sendMessage(
+        content: 'There ${pages == 1 ? 'is' : 'are'} only $pages page${pages == 1 ? '' : 's'}',
+        replyBuilder: ReplyBuilder.fromMessage(message),
+      );
     }
 
     var embed = EmbedBuilder()
@@ -41,7 +44,7 @@ class Help extends Script {
       })
       ..color = nomacDiscordColor;
 
-    commands.where((e) => !e.adminOnly).skip(current - 1).take(6).forEach(
+    scripts.where((e) => !e.adminOnly).skip(current - 1).take(6).forEach(
           (e) => embed.addField(
             field: EmbedFieldBuilder(
               e.name,
@@ -50,6 +53,6 @@ class Help extends Script {
           ),
         );
 
-    return context.channel.sendMessage(embed: embed);
+    return channel.sendMessage(embed: embed);
   }
 }

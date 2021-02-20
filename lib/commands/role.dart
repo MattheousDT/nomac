@@ -16,34 +16,29 @@ class Role extends Script {
         );
 
   @override
-  void registerArgs() {
+  void setup() {
     argParser..addOption('add', allowed: roles)..addOption('remove', allowed: roles)..addOption('user', abbr: 'u');
   }
 
   @override
-  Future<Message> cb(context, message, args) async {
+  Future<Message> cb(message, channel, guild, args) async {
     String? add = args['add'];
     String? remove = args['remove'];
     String? user = args['user'];
 
     if (user != null) {
-      if (context.guild?.currentUserPermissions?.manageRoles == false) {
+      if (guild.currentUserPermissions?.manageRoles == false) {
         throw NomacException('You do not have the permissions to modify another user\'s roles');
       }
     } else {
-      user = context.author.id.toString();
+      user = message.author.id.toString();
     }
 
-    var member = await context.guild
-        ?.fetchMember(user.toSnowflake())
+    var member = await guild
+        .fetchMember(user.toSnowflake())
         .catchError((err) => throw NomacException('Could not find the specified role'));
 
-    var role =
-        context.guild?.roles.findOne((item) => item.name.toLowerCase() == add || item.name.toLowerCase() == remove);
-
-    if (member == null) {
-      throw NomacException('Could not find the specified member');
-    }
+    var role = guild.roles.findOne((item) => item.name.toLowerCase() == add || item.name.toLowerCase() == remove);
 
     if (role == null) {
       throw NomacException('Could not find the specified role');
@@ -51,12 +46,18 @@ class Role extends Script {
 
     if (add != null) {
       await member.addRole(role);
-      return context.reply(content: 'Added role: ${role.name}');
+      return channel.sendMessage(
+        content: 'Added role: ${role.name}',
+        replyBuilder: ReplyBuilder.fromMessage(message),
+      );
     }
 
     if (remove != null) {
       await member.removeRole(role);
-      return context.reply(content: 'Removed role: ${role.name}');
+      return channel.sendMessage(
+        content: 'Removed role: ${role.name}',
+        replyBuilder: ReplyBuilder.fromMessage(message),
+      );
     }
 
     throw NomacException('This is not a valid command.');

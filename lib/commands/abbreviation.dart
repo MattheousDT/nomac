@@ -16,16 +16,16 @@ class Abbreviation extends Script {
         );
 
   @override
-  void registerArgs() {
+  void setup() {
     argParser..addCommand('list');
   }
 
   @override
-  Future<Message> cb(context, message, args) async {
+  Future<Message> cb(message, channel, guild, args) async {
     if (args.command?.name == 'list') {
-      return context.reply(
-        content: '<https://github.com/MattheousDT/nomac/blob/master/lib/commands/abbreviation.dart#L55>',
-      );
+      return channel.sendMessage(
+          content: '<https://github.com/MattheousDT/nomac/blob/master/lib/commands/abbreviation.dart#L55>',
+          replyBuilder: ReplyBuilder.fromMessage(message));
     }
 
     String abbr;
@@ -48,7 +48,10 @@ class Abbreviation extends Script {
 
     var match = _abbreviations[key]!;
 
-    return context.reply(content: match);
+    return channel.sendMessage(
+      content: match,
+      replyBuilder: ReplyBuilder.fromMessage(message),
+    );
   }
 }
 

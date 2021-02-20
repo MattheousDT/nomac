@@ -12,9 +12,10 @@ class Js extends Script {
           name: 'JavaScript',
           description: 'Evaluate JS inside a headless chrome',
           example: '${prefix}js `console.log("bruh");`',
-          match: 'js',
+          icon: 'https://miro.medium.com/max/720/1*LjR0UrFB2a__5h1DWqzstA.png',
+          match: '```js',
           adminOnly: true,
-          type: NomacCommandType.command,
+          type: NomacCommandType.startsWith,
         );
 
   // @override
@@ -23,21 +24,26 @@ class Js extends Script {
   // }
 
   @override
-  Future<Message> cb(context, message, args) async {
+  Future<Message> cb(message, channel, guild, args) async {
     final _browser = di<Browser>();
-    final jsString = args.arguments.join(' ').replaceFirst('```js', '').replaceAll('`', '');
+    final jsString = message.content.replaceFirst('```js', '').replaceAll('`', '');
     final page = await _browser.newPage();
 
     dynamic result;
 
     try {
-      result = await page.evaluate('() => {$jsString}');
+      result = await page.evaluate('async () => {$jsString}');
     } catch (err) {
       result = err;
     }
 
     await page.close();
 
-    return context.reply(content: '```js\n$result\n```');
+    var embed = EmbedBuilder()
+      ..author = embedAuthor
+      ..color = DiscordColor.yellow
+      ..description = '```js\n$result\n```';
+
+    return channel.sendMessage(embed: embed);
   }
 }

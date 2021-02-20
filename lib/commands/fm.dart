@@ -7,7 +7,6 @@ import '../service_locator.dart';
 import '../services/lastfm_service.dart';
 import '../services/user_service.dart';
 import '../util/escape_markdown.dart';
-import 'package:nyxx_commander/commander.dart';
 
 class LastFm extends Script {
   LastFm()
@@ -27,7 +26,7 @@ class LastFm extends Script {
   final _lastFmService = di<LastFmService>();
 
   @override
-  void registerArgs() {
+  void setup() {
     argParser
       ..addCommand('recent')
       ..addCommand('artists')
@@ -44,7 +43,7 @@ class LastFm extends Script {
   }
 
   @override
-  Future<Message> cb(context, message, args) async {
+  Future<Message> cb(message, channel, guild, args) async {
     final command = args.command?.name;
     String? user = args['user'];
     String period = args['period'];
@@ -52,7 +51,7 @@ class LastFm extends Script {
     // If username is not provided
     if (user == null) {
       // Try grabbing from the DB
-      var dbUser = await _userService.getUserByDiscordId(context.author.id.toString());
+      var dbUser = await _userService.getUserByDiscordId(message.author.id.toString());
 
       // If no user exists in the DB
       if (dbUser == null || dbUser.lastfmUsername == null) {
@@ -76,9 +75,9 @@ class LastFm extends Script {
         await _albums(user, period, embed);
         break;
       case 'set':
-        return await _set(user, context);
+        return await _set(user, message, channel);
       case 'collage':
-        return await _collage(user, context, period);
+        return await _collage(user, channel, period);
       case 'recent':
         await _recent(user, embed);
         break;
@@ -86,7 +85,7 @@ class LastFm extends Script {
         throw NomacException('This is not a valid command. Type `${prefix}fm --help` for a list of commands');
     }
 
-    return context.channel.sendMessage(embed: embed);
+    return channel.sendMessage(embed: embed);
   }
 
   Future<void> _artists(String user, String period, EmbedBuilder embed) async {
@@ -117,27 +116,30 @@ class LastFm extends Script {
     }
   }
 
-  Future<Message> _set(String user, CommandContext context) async {
+  Future<Message> _set(String user, Message message, TextChannel channel) async {
     try {
-      var nomacUser = NomacUser(discordId: context.author.id.toString(), lastfmUsername: user);
+      var nomacUser = NomacUser(discordId: message.author.id.toString(), lastfmUsername: user);
       await _userService.updateUser(nomacUser);
-      return context.reply(content: 'Your last.fm username has been set to "$user"');
+      return channel.sendMessage(
+        content: 'Your last.fm username has been set to "$user"',
+        replyBuilder: ReplyBuilder.fromMessage(message),
+      );
     } catch (err) {
       throw NomacException(err.toString());
     }
   }
 
-  Future<Message> _collage(String user, CommandContext context, String period) async {
-    context.channel.startTypingLoop();
+  Future<Message> _collage(String user, TextChannel channel, String period) async {
+    channel.startTypingLoop();
     try {
       var img = await _lastFmService.getCollage(user, period);
-      context.channel.stopTypingLoop();
-      return context.channel.sendMessage(
+      channel.stopTypingLoop();
+      return channel.sendMessage(
         files: [AttachmentBuilder.bytes(img, 'collage.jpg')],
         content: '',
       );
     } catch (err) {
-      context.channel.stopTypingLoop();
+      channel.stopTypingLoop();
       rethrow;
     }
   }
