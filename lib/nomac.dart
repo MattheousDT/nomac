@@ -14,6 +14,8 @@ void main(List<String> arguments) async {
   var logger = Logger('NOMAC');
 
   await initServiceLocator();
+  await di.allReady();
+
   var bot = di<Nyxx>();
 
   var db = di<Db>();

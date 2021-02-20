@@ -2,6 +2,7 @@ import 'commands/abbreviation.dart';
 import 'commands/fm.dart';
 import 'commands/help.dart';
 import 'commands/info.dart';
+import 'commands/js.dart';
 import 'commands/role.dart';
 import 'models/script.dart';
 
@@ -9,6 +10,7 @@ import 'models/script.dart';
 List<Script> commands = [
   Abbreviation(),
   Info(),
+  Js(),
   Help(),
   LastFm(),
   Role(),

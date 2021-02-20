@@ -15,6 +15,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.41.2"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.13"
   args:
     dependency: "direct main"
     description:
@@ -393,6 +400,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   pointycastle:
     dependency: transitive
     description:
@@ -421,6 +435,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.8"
+  puppeteer:
+    dependency: "direct main"
+    description:
+      name: puppeteer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.22.0"
   quiver:
     dependency: transitive
     description:

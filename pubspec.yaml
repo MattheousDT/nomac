@@ -19,6 +19,7 @@ dependencies:
   nyxx: 1.1.0-dev.2
   nyxx_commander: 1.1.0-dev.1
   nyxx_interactions: ^1.1.0-dev.1
+  puppeteer: ^1.22.0
 dependency_overrides:
   logging: ^1.0.0-nullsafety.0
   http: ^0.12.0

@@ -10,3 +10,4 @@ doc/api/
 
 .env
 .vscode
+.local-chromium

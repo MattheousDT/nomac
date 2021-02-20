@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:puppeteer/puppeteer.dart';
 
 import 'constants.dart';
 import 'services/lastfm_service.dart';
@@ -44,10 +45,9 @@ Future<void> initServiceLocator() async {
       ignoreExceptions: isProduction,
     ),
   );
-
   di.registerLazySingleton<Db>(() => Db(mongoConnectionString));
-
   di.registerLazySingleton<Client>(() => Client());
+  di.registerSingletonAsync<Browser>(() async => puppeteer.launch());
 
   // Services/Connectors
   di.registerLazySingleton<UserService>(() => UserService(di()));

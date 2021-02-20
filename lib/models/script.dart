@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:args/args.dart';
-import 'package:dotenv/dotenv.dart' show env;
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_commander/commander.dart';
 
@@ -46,8 +45,11 @@ abstract class Script {
 
   Future<Message> run(CommandContext context, String message) async {
     // If command is admin only
-    if (adminOnly && context.author.id.toString() != env['ADMIN_ID']) {
-      return context.reply(content: 'You are not authorised to use this command');
+    if (adminOnly) {
+      var perms = await context.member?.effectivePermissions;
+      if (perms?.administrator == false || perms?.manageRoles == false) {
+        return context.reply(content: 'You are not authorised to use this command');
+      }
     }
 
     // Try and parse the arguments
