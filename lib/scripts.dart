@@ -2,7 +2,6 @@ import 'scripts/abbreviation.dart';
 import 'scripts/fm.dart';
 import 'scripts/help.dart';
 import 'scripts/info.dart';
-import 'scripts/js.dart';
 import 'scripts/role.dart';
 import 'models/script.dart';
 
@@ -11,7 +10,6 @@ final scripts = <Script>[
   // Commands
   Abbreviation()..setup(),
   Info()..setup(),
-  Js()..setup(),
   Help()..setup(),
   LastFm()..setup(),
   Role()..setup(),
