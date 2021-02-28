@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:dotenv/dotenv.dart' show load;
 import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -23,7 +24,7 @@ void main(List<String> arguments) async {
   bot.onReady.listen((event) {
     bot.setPresence(PresenceBuilder.of(
       game: Activity.of(
-        'Very much in development',
+        '!help',
       ),
     ));
     logger.fine('NOMAC Ready!');

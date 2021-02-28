@@ -3,7 +3,8 @@
 .packages
 
 # Conventional directory for build outputs
-build/
+build/*
+!build/.gitkeep
 
 # Directory created by dartdoc
 doc/api/
