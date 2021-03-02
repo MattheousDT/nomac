@@ -12,8 +12,14 @@ class NomacUser {
 
   final String discordId;
   final String? lastfmUsername;
+  final int? sunglassesCount;
 
-  NomacUser({this.id, required this.discordId, this.lastfmUsername});
+  NomacUser({
+    this.id,
+    required this.discordId,
+    this.lastfmUsername,
+    this.sunglassesCount,
+  });
 
   factory NomacUser.fromJson(Map<String, dynamic> json) => _$NomacUserFromJson(json);
 

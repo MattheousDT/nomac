@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:nomac/services/sunglasses_service.dart';
 import 'package:nyxx/nyxx.dart';
 
 import 'constants.dart';
@@ -50,4 +51,5 @@ Future<void> initServiceLocator() async {
   // Services/Connectors
   di.registerLazySingleton<UserService>(() => UserService(di()));
   di.registerLazySingleton<LastFmService>(() => LastFmService(lastFmToken, di()));
+  di.registerLazySingleton<SunglassesService>(() => SunglassesService(di(), di()));
 }

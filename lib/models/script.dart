@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:args/args.dart';
+import 'package:nomac/util/is_admin.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_commander/commander.dart';
 
 import '../constants.dart';
 import '../service_locator.dart';
@@ -46,8 +46,7 @@ abstract class Script {
   Future<Message> run(Message message, TextChannel channel, Guild guild) async {
     // If command is admin only
     if (adminOnly) {
-      var perms = await guild.fetchMember(message.author.id).then((value) => value.effectivePermissions);
-      if (perms.administrator == false || perms.manageRoles == false) {
+      if (!await isAdmin(message.author.id, guild)) {
         return channel.sendMessage(
           content: 'You are not authorised to use this command',
           replyBuilder: ReplyBuilder.fromMessage(message),

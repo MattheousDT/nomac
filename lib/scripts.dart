@@ -1,3 +1,5 @@
+import 'package:nomac/scripts/sunglasses.dart';
+
 import 'scripts/abbreviation.dart';
 import 'scripts/fm.dart';
 import 'scripts/help.dart';
@@ -13,4 +15,5 @@ final scripts = <Script>[
   Help()..setup(),
   LastFm()..setup(),
   Role()..setup(),
+  Sunglasses()..setup(),
 ];

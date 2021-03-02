@@ -1,3 +1,4 @@
+import 'package:dotenv/dotenv.dart';
 import 'package:nyxx/nyxx.dart';
 
 const nomacColor = '#B972DA';
@@ -8,7 +9,7 @@ final warningDiscordColor = DiscordColor.fromHexString(nomacColor);
 
 final isProduction = bool.fromEnvironment('dart.vm.product');
 
-const prefix = '!';
+final prefix = env['PREFIX']!;
 
 const roles = [
   'europe',

@@ -11,6 +11,7 @@ NomacUser _$NomacUserFromJson(Map<String, dynamic> json) {
     id: objectIdFromJson(json['_id'] as ObjectId),
     discordId: json['discord_id'] as String,
     lastfmUsername: json['lastfm_username'] as String?,
+    sunglassesCount: json['sunglasses_count'] as int?,
   );
 }
 
@@ -26,5 +27,6 @@ Map<String, dynamic> _$NomacUserToJson(NomacUser instance) {
   writeNotNull('_id', objectIdToJson(instance.id));
   val['discord_id'] = instance.discordId;
   writeNotNull('lastfm_username', instance.lastfmUsername);
+  writeNotNull('sunglasses_count', instance.sunglassesCount);
   return val;
 }
