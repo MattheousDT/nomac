@@ -16,9 +16,13 @@ dependencies:
   json_serializable: ^4.0.0
   logging: ^1.0.0-nullsafety.0
   mongo_dart: ^0.4.4
-  nyxx: 1.1.0-dev.2
-  nyxx_commander: 1.1.0-dev.1
-  nyxx_interactions: ^1.1.0-dev.1
+  nyxx: 1.1.0-dev.3
+  nyxx_commander: 1.1.0-dev.3
+  nyxx_interactions:
+    git:
+      url: https://github.com/MattheousDT/nyxx.git
+      ref: bugfix/commandarg-json-encode-error
+      path: nyxx.interactions
 dependency_overrides:
   logging: ^1.0.0-nullsafety.0
   http: ^0.12.0

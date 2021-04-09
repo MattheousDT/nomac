@@ -357,21 +357,23 @@ packages:
       name: nyxx
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0-dev.2"
+    version: "1.1.0-dev.3"
   nyxx_commander:
     dependency: "direct main"
     description:
       name: nyxx_commander
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0-dev.1"
+    version: "1.1.0-dev.3"
   nyxx_interactions:
     dependency: "direct main"
     description:
-      name: nyxx_interactions
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0-dev.1"
+      path: "nyxx.interactions"
+      ref: "bugfix/commandarg-json-encode-error"
+      resolved-ref: edf9ba15aa8e353c1b1e71e0a62a518d57be94cc
+      url: "https://github.com/MattheousDT/nyxx.git"
+    source: git
+    version: "1.1.0-dev.2"
   package_config:
     dependency: transitive
     description:
@@ -541,4 +543,4 @@ packages:
     source: hosted
     version: "3.0.0"
 sdks:
-  dart: ">=2.12.0-259.12.beta <3.0.0"
+  dart: ">=2.12.0 <=2.13.0-59.0.dev"

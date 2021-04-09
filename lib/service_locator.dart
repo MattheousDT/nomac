@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:nomac/services/sunglasses_service.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx_interactions/interactions.dart';
 
 import 'constants.dart';
 import 'services/lastfm_service.dart';
@@ -47,6 +48,7 @@ Future<void> initServiceLocator() async {
   );
   di.registerLazySingleton<Db>(() => Db(mongoConnectionString));
   di.registerLazySingleton<Client>(() => Client());
+  di.registerLazySingleton<Interactions>(() => Interactions(di()));
 
   // Services/Connectors
   di.registerLazySingleton<UserService>(() => UserService(di()));
