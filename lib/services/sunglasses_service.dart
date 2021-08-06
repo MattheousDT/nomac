@@ -1,48 +1,36 @@
 import 'package:logging/logging.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../models/user.dart';
-import 'user_service.dart';
+import '../models/sunglasses/sunglasses.dart';
+import '../models/user/user.dart';
 
 class SunglassesService {
-  final Logger _logger = Logger('NOMAC | Sunglasses Service');
-
-  final Db db;
-  final UserService userService;
-
   SunglassesService(
-    this.db,
-    this.userService,
-  );
+    Db db,
+  ) : _coll = db.collection('sunglasses');
 
-  Future<int> add(String id) async {
-    var coll = db.collection(userService.collectionName);
+  final _logger = Logger('NOMAC | SunglassesService');
+  final DbCollection _coll;
 
-    Map<String, dynamic> result = await coll.findOne(where.eq('discord_id', id));
-
-    if (result == null) {
-      await userService.createUser(NomacUser(discordId: id));
-      result = await coll.findOne(where.eq('discord_id', id));
+  Future<bool> own(Sunglasses model) async {
+    try {
+      await _coll.insert(model.toJson());
+      return true;
+    } catch (err) {
+      _logger.severe(err);
+      return false;
     }
+  }
 
-    result['sunglasses_count'] = (result['sunglasses_count'] ?? 0) + 1;
+  Future<int> ownedCount(String discordId) async {
+    return _coll.count(where.eq('victim', discordId));
+  }
 
-    await coll.save(result);
-
-    return result['sunglasses_count'];
+  Future<int> ownageCount(String discordId) async {
+    return _coll.count(where.eq('owned_by', discordId));
   }
 
   Future<List<NomacUser>> getTop() async {
-    final result = await db
-        .collection(userService.collectionName)
-        .find(where
-            .sortBy(
-              'sunglasses_count',
-              descending: true,
-            )
-            .limit(10))
-        .toList();
-
-    return result.map((element) => NomacUser.fromJson(element)).where((e) => e.sunglassesCount != null).toList();
+    throw UnimplementedError();
   }
 }

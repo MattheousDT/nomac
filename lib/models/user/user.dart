@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../util/mongo_id_parse.dart';
+import '../../util/mongo_id_parse.dart';
 
 part 'user.g.dart';
 
@@ -12,13 +12,11 @@ class NomacUser {
 
   final String discordId;
   final String? lastfmUsername;
-  final int? sunglassesCount;
 
   NomacUser({
     this.id,
     required this.discordId,
     this.lastfmUsername,
-    this.sunglassesCount,
   });
 
   factory NomacUser.fromJson(Map<String, dynamic> json) => _$NomacUserFromJson(json);

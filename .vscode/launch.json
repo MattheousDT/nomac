@@ -8,8 +8,7 @@
       "name": "Dart",
       "type": "dart",
       "request": "launch",
-      "program": "lib/nomac.dart",
-      "vmAdditionalArgs": ["--no-sound-null-safety"]
+      "program": "lib/main.dart"
     }
   ]
 }

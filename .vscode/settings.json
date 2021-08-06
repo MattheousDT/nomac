@@ -1,3 +1,4 @@
 {
-  "dart.lineLength": 120
+  "dart.lineLength": 120,
+  "dart.sdkPath": "C:\\tools\\dart-sdk"
 }

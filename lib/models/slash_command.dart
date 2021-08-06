@@ -1,7 +1,8 @@
-import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_interactions/interactions.dart';
+import "package:nyxx/nyxx.dart";
+import "package:nyxx_interactions/interactions.dart";
 
-import '../service_locator.dart';
+import "../service_locator.dart";
+import "../util/extensions/iterables.dart";
 
 abstract class NomacSlashCommand {
   final String name;
@@ -10,13 +11,15 @@ abstract class NomacSlashCommand {
 
   NomacSlashCommand(this.name);
 
-  EmbedAuthorBuilder get embedAuthor => EmbedAuthorBuilder()..name = 'NOMAC // $name';
+  EmbedAuthorBuilder get embedAuthor => EmbedAuthorBuilder()..name = "NOMAC // $name";
 
-  SlashCommand create() {
-    throw UnimplementedError();
-  }
+  InteractionOption getSubCommand(SlashCommandInteractionEvent event, String name) =>
+      event.interaction.options.firstWhere((element) => element.name == name);
 
-  Future<void> run(InteractionEvent event) async {
+  InteractionOption? getArg(InteractionOption option, String name) =>
+      option.args.firstWhereOrNull((element) => element.name == name);
+
+  SlashCommandBuilder build() {
     throw UnimplementedError();
   }
 }

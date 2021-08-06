@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'sunglasses.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-NomacUser _$NomacUserFromJson(Map<String, dynamic> json) {
-  return NomacUser(
+Sunglasses _$SunglassesFromJson(Map<String, dynamic> json) {
+  return Sunglasses(
     id: objectIdFromJson(json['_id'] as ObjectId),
-    discordId: json['discord_id'] as String,
-    lastfmUsername: json['lastfm_username'] as String?,
-    sunglassesCount: json['sunglasses_count'] as int?,
+    victim: json['victim'] as String,
+    ownedBy: json['owned_by'] as String,
+    date: DateTime.parse(json['date'] as String),
   );
 }
 
-Map<String, dynamic> _$NomacUserToJson(NomacUser instance) {
+Map<String, dynamic> _$SunglassesToJson(Sunglasses instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -25,8 +25,8 @@ Map<String, dynamic> _$NomacUserToJson(NomacUser instance) {
   }
 
   writeNotNull('_id', objectIdToJson(instance.id));
-  val['discord_id'] = instance.discordId;
-  writeNotNull('lastfm_username', instance.lastfmUsername);
-  writeNotNull('sunglasses_count', instance.sunglassesCount);
+  val['victim'] = instance.victim;
+  val['owned_by'] = instance.ownedBy;
+  val['date'] = instance.date.toIso8601String();
   return val;
 }
