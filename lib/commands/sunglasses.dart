@@ -47,7 +47,14 @@ class SunglassesCommand extends NomacSlashCommand {
         CommandOptionBuilder(
           CommandOptionType.subCommand,
           'ownage',
-          'Check how many times you\'ve le epically owned someone else',
+          'Check how many times someone has le epically owned someone else',
+          options: [
+            CommandOptionBuilder(
+              CommandOptionType.user,
+              'user',
+              'Someone other than yourself',
+            ),
+          ],
         )..registerHandler(_ownage),
         CommandOptionBuilder(
           CommandOptionType.subCommand,
@@ -96,12 +103,23 @@ class SunglassesCommand extends NomacSlashCommand {
   }
 
   Future<void> _ownage(SlashCommandInteractionEvent event) async {
+    final String id =
+        getArg(getSubCommand(event, 'ownage'), 'user')?.value ?? event.interaction.memberAuthor.id.toString();
+
+    final isMe = id == event.interaction.memberAuthor.id.toString();
+
     final count = await _sunglassesService.ownageCount(event.interaction.memberAuthor.id.toString());
 
-    await event.respond(MessageBuilder.content('You have le epically owned noobs **$count times!** 😎'));
+    if (isMe) {
+      return await event.respond(MessageBuilder.content('You have le epically owned noobs **$count times!** 😎'));
+    } else {
+      final username = (await bot.fetchUser(id.toSnowflake())).username;
+      return await event.respond(MessageBuilder.content('$username has le epically owned noobs **$count times!** 😎'));
+    }
   }
 
   Future<void> _leaderboard(SlashCommandInteractionEvent event) async {
+    await event.acknowledge();
     final leaderboard = await _sunglassesService.getTop();
 
     final embed = EmbedBuilder()
@@ -109,10 +127,16 @@ class SunglassesCommand extends NomacSlashCommand {
       ..color = nomacDiscordColor;
 
     for (var element in leaderboard) {
-      var user = await bot.fetchUser(element.discordId.toSnowflake());
+      User? user;
+
+      try {
+        user = await bot.fetchUser(element.discordId.toSnowflake());
+      } catch (err) {
+        user = null;
+      }
       embed.addField(
         name: '#${leaderboard.indexOf(element) + 1}',
-        content: '${user.username} - ${element.count}',
+        content: '${user != null ? user.username : element.discordId} - ${element.count}',
       );
     }
 

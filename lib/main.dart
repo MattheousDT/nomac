@@ -8,6 +8,7 @@ import 'package:nomac/commands/fm.dart';
 import 'package:nomac/commands/sunglasses.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_interactions/interactions.dart';
+import 'package:pubspec/pubspec.dart';
 
 import 'service_locator.dart';
 import 'util/http_overrides.dart';
@@ -25,24 +26,21 @@ void main(List<String> arguments) async {
   final db = di<Db>();
   await db.open();
 
-  // EXPERIMENTAL SHIT
-
   final interactions = di<Interactions>()
     ..registerSlashCommand(AbbreviationCommand().build())
     ..registerSlashCommand(LastFm().build())
     ..registerSlashCommand(SunglassesCommand().build());
 
-  // final slashCommands = <NomacSlashCommand>[
-  //   AbbreviationCommand(),
-  // ];
-
-  // END EXPERIMENTAL SHIT
-
   // bot.onMessageReceived.listen(onMessageRecieved);
 
   bot.onReady.listen((event) async {
     await interactions.sync();
-    bot.setPresence(PresenceBuilder.of(activity: ActivityBuilder.game('v2 beta')));
-    logger.fine('NOMAC Ready!');
+
+    final pub = await PubSpec.load(Directory.current);
+    bot.setPresence(PresenceBuilder.of(
+      activity: ActivityBuilder.game('v${pub.version}'),
+    ));
+
+    logger.info('NOMAC Ready!');
   });
 }
