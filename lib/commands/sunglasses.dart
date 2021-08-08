@@ -1,113 +1,121 @@
-// import 'package:nomac/models/sunglasses/sunglasses.dart';
-// import 'package:nyxx/nyxx.dart';
-// import 'package:nyxx_interactions/interactions.dart';
+import 'package:nomac/models/sunglasses/sunglasses.dart';
+import 'package:nomac/util/constants.dart';
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx_interactions/interactions.dart';
 
-// import '../models/slash_command.dart';
-// import '../service_locator.dart';
-// import '../services/sunglasses_service.dart';
-// import '../util/is_admin.dart';
+import '../models/slash_command.dart';
+import '../service_locator.dart';
+import '../services/sunglasses_service.dart';
+import '../util/is_admin.dart';
 
-// class SunglassesCommand extends NomacSlashCommand {
-//   final _sunglassesService = di<SunglassesService>();
+class SunglassesCommand extends NomacSlashCommand {
+  final _sunglassesService = di<SunglassesService>();
 
-//   SunglassesCommand() : super('Sunglasses 😎');
+  SunglassesCommand() : super('Sunglasses 😎');
 
-//   @override
-//   SlashCommand create() {
-//     return interactions.createCommand(
-//       'sunglasses',
-//       '😎',
-//       [
-//         CommandArg(
-//           CommandArgType.subCommand,
-//           'own',
-//           'Le epically own someone',
-//           options: [
-//             CommandArg(
-//               CommandArgType.user,
-//               'user',
-//               'Who you want to epically own',
-//               required: true,
-//             ),
-//           ],
-//         ),
-//         CommandArg(
-//           CommandArgType.subCommand,
-//           'count',
-//           'Check how many times you\'ve been le epically owned by a mod',
-//         ),
-//         CommandArg(
-//           CommandArgType.subCommand,
-//           'ownage',
-//           'Check how many times you\'ve le epically owned someone else',
-//         ),
-//         CommandArg(
-//           CommandArgType.subCommand,
-//           'leaderboard',
-//           'Find out who has been epically owned the most',
-//         ),
-//       ],
-//       guild: Snowflake('512050257626923019'),
-//     );
-//   }
+  @override
+  SlashCommandBuilder build() {
+    return SlashCommandBuilder(
+      'sunglasses',
+      '😎',
+      [
+        CommandOptionBuilder(
+          CommandOptionType.subCommand,
+          'own',
+          'Le epically own someone',
+          options: [
+            CommandOptionBuilder(
+              CommandOptionType.user,
+              'user',
+              'Who you want to epically own',
+              required: true,
+            ),
+          ],
+        )..registerHandler(_own),
+        CommandOptionBuilder(
+          CommandOptionType.subCommand,
+          'count',
+          'Check how many times someone has been le epically owned by a mod',
+          options: [
+            CommandOptionBuilder(
+              CommandOptionType.user,
+              'user',
+              'Someone other than yourself',
+            ),
+          ],
+        )..registerHandler(_count),
+        CommandOptionBuilder(
+          CommandOptionType.subCommand,
+          'ownage',
+          'Check how many times you\'ve le epically owned someone else',
+        )..registerHandler(_ownage),
+        CommandOptionBuilder(
+          CommandOptionType.subCommand,
+          'leaderboard',
+          'Find out who has been epically owned the most',
+        )..registerHandler(_leaderboard),
+      ],
+      guild: 285051699717210113.toSnowflake(),
+    );
+  }
 
-//   @override
-//   Future<void> run(InteractionEvent event) async {
-//     if (event.interaction.name == 'sunglasses') {
-//       final args = event.interaction.args;
-//       for (var arg in args) {
-//         switch (arg.name) {
-//           case 'own':
-//             return await _own(event, Snowflake(arg.args.last.value));
-//           case 'count':
-//             return await _count(event);
-//           case 'ownage':
-//             return await _ownage(event);
-//           case 'leaderboard':
-//             return await _leaderboard(event);
-//         }
-//       }
-//     }
-//   }
+  Future<void> _own(SlashCommandInteractionEvent event) async {
+    if (!await isAdmin(event.interaction.memberAuthor.id, event.interaction.guild!.getFromCache()!)) {
+      return event.respond(MessageBuilder.content('Nice try 😎'));
+    }
 
-//   Future<void> _own(InteractionEvent event, Snowflake id) async {
-//     if (!await isAdmin(event.interaction.author.id, event.interaction.guild.getFromCache()!)) {
-//       return event.reply(content: 'Nice try 😎', showSource: true);
-//     }
+    final String id = getArg(getSubCommand(event, 'own'), 'user')?.value;
 
-//     final user = await bot.fetchUser(id);
+    final user = await bot.fetchUser(id.toSnowflake());
 
-//     await _sunglassesService.own(Sunglasses(
-//       victim: id.toString(),
-//       ownedBy: event.interaction.author.id.toString(),
-//       date: event.receivedAt,
-//     ));
+    await _sunglassesService.own(Sunglasses(
+      victim: id,
+      ownedBy: event.interaction.memberAuthor.id.toString(),
+      date: event.receivedAt,
+    ));
 
-//     final count = await _sunglassesService.ownedCount(id.toString());
+    final count = await _sunglassesService.ownedCount(id);
 
-//     await event.reply(content: '${user.mention} has now been 😎\'d **${count} times!**');
-//   }
+    await event.respond(MessageBuilder.content('${user.mention} has now been 😎\'d **$count times!**'));
+  }
 
-//   Future<void> _count(InteractionEvent event) async {
-//     final count = await _sunglassesService.ownedCount(event.interaction.author.id.toString());
+  Future<void> _count(SlashCommandInteractionEvent event) async {
+    final String id =
+        getArg(getSubCommand(event, 'count'), 'user')?.value ?? event.interaction.memberAuthor.id.toString();
 
-//     return event.reply(
-//       content: 'You have been 😎\'d **$count times!**',
-//       showSource: true,
-//     );
-//   }
+    final isMe = id == event.interaction.memberAuthor.id.toString();
 
-//   Future<void> _ownage(InteractionEvent event) async {
-//     final count = await _sunglassesService.ownageCount(event.interaction.author.id.toString());
+    final count = await _sunglassesService.ownedCount(id);
 
-//     return event.reply(
-//       content: 'You have le epically owned noobs **$count times!** 😎',
-//       showSource: true,
-//     );
-//   }
+    if (isMe) {
+      return await event.respond(MessageBuilder.content('You have been 😎\'d **$count times!**'));
+    } else {
+      final username = (await bot.fetchUser(id.toSnowflake())).username;
+      return await event.respond(MessageBuilder.content('$username has been 😎\'d **$count times!**'));
+    }
+  }
 
-//   Future<void> _leaderboard(InteractionEvent event) async {
-//     throw UnimplementedError();
-//     //return event.reply(embed: embed, showSource: true);
-//   }
-// }
+  Future<void> _ownage(SlashCommandInteractionEvent event) async {
+    final count = await _sunglassesService.ownageCount(event.interaction.memberAuthor.id.toString());
+
+    await event.respond(MessageBuilder.content('You have le epically owned noobs **$count times!** 😎'));
+  }
+
+  Future<void> _leaderboard(SlashCommandInteractionEvent event) async {
+    final leaderboard = await _sunglassesService.getTop();
+
+    final embed = EmbedBuilder()
+      ..author = embedAuthor
+      ..color = nomacDiscordColor;
+
+    for (var element in leaderboard) {
+      var user = await bot.fetchUser(element.discordId.toSnowflake());
+      embed.addField(
+        name: '#${leaderboard.indexOf(element) + 1}',
+        content: '${user.username} - ${element.count}',
+      );
+    }
+
+    await event.respond(MessageBuilder.embed(embed));
+  }
+}

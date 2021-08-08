@@ -19,7 +19,8 @@ class NomacUser {
     this.lastfmUsername,
   });
 
-  factory NomacUser.fromJson(Map<String, dynamic> json) => _$NomacUserFromJson(json);
+  factory NomacUser.fromJson(Map<String, dynamic> json) =>
+      _$NomacUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$NomacUserToJson(this);
 }

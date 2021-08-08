@@ -2,9 +2,7 @@ include: package:pedantic/analysis_options.yaml
 
 linter:
   rules:
-    avoid_print: true
-    prefer_single_quotes: false
-    prefer_double_quotes: true
+    - avoid_print
 
 analyzer:
   errors:

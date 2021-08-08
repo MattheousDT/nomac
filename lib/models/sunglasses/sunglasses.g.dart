@@ -6,14 +6,12 @@ part of 'sunglasses.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Sunglasses _$SunglassesFromJson(Map<String, dynamic> json) {
-  return Sunglasses(
-    id: objectIdFromJson(json['_id'] as ObjectId),
-    victim: json['victim'] as String,
-    ownedBy: json['owned_by'] as String,
-    date: DateTime.parse(json['date'] as String),
-  );
-}
+Sunglasses _$SunglassesFromJson(Map<String, dynamic> json) => Sunglasses(
+      id: objectIdFromJson(json['_id'] as ObjectId),
+      victim: json['victim'] as String,
+      ownedBy: json['owned_by'] as String,
+      date: DateTime.parse(json['date'] as String),
+    );
 
 Map<String, dynamic> _$SunglassesToJson(Sunglasses instance) {
   final val = <String, dynamic>{};

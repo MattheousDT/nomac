@@ -6,13 +6,11 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-NomacUser _$NomacUserFromJson(Map<String, dynamic> json) {
-  return NomacUser(
-    id: objectIdFromJson(json['_id'] as ObjectId),
-    discordId: json['discord_id'] as String,
-    lastfmUsername: json['lastfm_username'] as String?,
-  );
-}
+NomacUser _$NomacUserFromJson(Map<String, dynamic> json) => NomacUser(
+      id: objectIdFromJson(json['_id'] as ObjectId),
+      discordId: json['discord_id'] as String,
+      lastfmUsername: json['lastfm_username'] as String?,
+    );
 
 Map<String, dynamic> _$NomacUserToJson(NomacUser instance) {
   final val = <String, dynamic>{};
