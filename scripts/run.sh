@@ -1,1 +1,0 @@
-sudo /usr/lib/dart-sdk/bin/dartaotruntime ./build/nomac.aot &
