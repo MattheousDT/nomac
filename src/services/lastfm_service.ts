@@ -15,27 +15,34 @@ export default class LastFmService {
       user,
       period,
       method,
+      limit: "5",
     });
 
     return fetch(`https://ws.audioscrobbler.com/2.0?${params.toString()}`).then((x) => x.json());
   };
 
-  getTopArtists = async (user: string, period: string) =>
+  getTopArtists = async (user: string, period = "7day") =>
     this.request<LastFmTopArtistsResponse>("user.gettopartists", user, period);
 
-  getTopAlbums = async (user: string, period: string) =>
+  getTopAlbums = async (user: string, period = "7day") =>
     this.request<LastFmTopAlbumsResponse>("user.gettopalbums", user, period);
 
-  getRecentTracks = async (user: string, period: string) =>
+  getRecentTracks = async (user: string) =>
     this.request<LastFmRecentTracksResponse>("user.getrecenttracks", user, "all");
 
-  getCollage = async (user: string, period: string) => {
+  getCollage = async (user: string, period = "7day") => {
     const params = new URLSearchParams({
       user,
-      period,
+      type: period,
       size: "3x3",
     });
 
-    return fetch(`https://www.tapmusic.net/collage.php?${params.toString()}`).then((x) => x.arrayBuffer());
+    const res = await fetch(`https://www.tapmusic.net/collage.php?${params.toString()}`);
+
+    if (!res.headers.get("content-type")?.startsWith("image")) {
+      throw new Error();
+    }
+
+    return res.buffer();
   };
 }

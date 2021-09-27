@@ -1,13 +1,12 @@
 import { Collection, Db } from "mongodb";
-import { Logger } from "pino";
-import { autoInjectable, inject } from "tsyringe";
+import { autoInjectable } from "tsyringe";
 import { IUser } from "../types/user_types";
 
 @autoInjectable()
 export default class UserService {
   private coll: Collection;
 
-  constructor(private db: Db, @inject("pino") private logger: Logger) {
+  constructor(private db: Db) {
     this.coll = db.collection("users");
   }
 

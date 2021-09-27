@@ -8,13 +8,7 @@ interface Image {
   "#text": string;
 }
 
-enum Size {
-  Extralarge = "extralarge",
-  Large = "large",
-  Medium = "medium",
-  Mega = "mega",
-  Small = "small",
-}
+type Size = "small" | "medium" | "large" | "extralarge" | "mega";
 
 interface PaginationAttr {
   page: string;
@@ -80,7 +74,10 @@ export interface LastFmRecentTracks {
 }
 
 interface Track {
-  artist: Album;
+  artist: {
+    mbid: string;
+    "#text": string;
+  };
   "@attr"?: {
     nowplaying: string;
   };
