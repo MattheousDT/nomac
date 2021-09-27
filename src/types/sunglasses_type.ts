@@ -1,5 +1,5 @@
 export interface ISunglasses {
-  victim: string;
-  owned_by: string;
-  date?: Date;
+	victim: string;
+	owned_by: string;
+	date?: Date;
 }
